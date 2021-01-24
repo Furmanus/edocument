@@ -1,0 +1,41 @@
+{
+  "name": "edocument",
+  "version": "1.0.0",
+  "description": "Store your documents in cloud",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf dist && tsc",
+    "start": "npm run server:dev",
+    "server:dev": "nodemon ./server/bootstrap.ts"
+  },
+  "author": "Lukasz Lach",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^7.6.5",
+    "@nestjs/core": "^7.6.5",
+    "@nestjs/platform-express": "^7.6.5",
+    "dotenv": "^8.2.0",
+    "hbs": "^4.1.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^6.6.3",
+    "typescript": "^4.1.3",
+    "webpack": "^5.17.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/node": "^14.14.22",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "eslint": "^7.18.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.22.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1"
+  }
+}

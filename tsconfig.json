@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "sourceMap": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "outDir": "./build",
+    "baseUrl": "./server"
+  },
+  "include": [
+    "server/**/*",
+    "server/**/*.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
