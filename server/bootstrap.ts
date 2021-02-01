@@ -11,7 +11,8 @@ const { PORT } = process.env;
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.setBaseViewsDir(resolve(__dirname, '..', 'views'));
+  app.useStaticAssets(resolve(__dirname, '..', 'dist'));
+  app.setBaseViewsDir(resolve(__dirname, '..', 'dist'));
   app.setViewEngine('hbs');
 
   await app.listen(PORT || 3000);
