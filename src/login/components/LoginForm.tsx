@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ChangeEvent, FormEvent, MouseEvent } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, FocusEvent } from 'react';
 
 import {
   Button,
@@ -15,6 +15,12 @@ import {
 } from '@material-ui/icons';
 import { LoginTexts } from '../contants/texts';
 import { ClassesType } from '../../common/interfaces/interfaces';
+import { createUserApi } from '../api/loginApi';
+import {
+  validateRepeatPassword,
+  validateUserName,
+  validateUserPassword,
+} from '../utils/loginForm';
 
 interface IState {
   readonly mode: 'login' | 'register';
@@ -23,6 +29,12 @@ interface IState {
   readonly repeatPasswordInputValue: string;
   readonly passwordVisible: boolean;
   readonly repeatPasswordVisible: boolean;
+  readonly loginInputError: string;
+  readonly passwordInputError: string;
+  readonly repeatPasswordInputError: string;
+  readonly loginInputHasBeenTouched: boolean;
+  readonly passwordInputHasBeenTouched: boolean;
+  readonly repeatPasswordInputHasBeenTouched: boolean;
 }
 
 const styles = {
@@ -31,9 +43,10 @@ const styles = {
     padding: '30px 0',
   },
   input: {
-    marginBottom: 24,
+    marginBottom: 8,
   },
   repeatPasswordInputWrapper: {
+    overflow: 'hidden',
     maxHeight: 0,
     transition: 'max-height 0.3s ease-in-out',
   },
@@ -43,8 +56,15 @@ const styles = {
   toggleButton: {
     paddingLeft: 0,
     paddingTop: 0,
-    marginTop: 24,
+    marginTop: 8,
     textTransform: 'none',
+  },
+  submitButton: {
+    marginTop: 0,
+  },
+  errorText: {
+    fontSize: 10,
+    marginTop: 0,
   },
 };
 
@@ -58,19 +78,117 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
     repeatPasswordInputValue: '',
     passwordVisible: false,
     repeatPasswordVisible: false,
+    loginInputError: null,
+    passwordInputError: null,
+    repeatPasswordInputError: null,
+    loginInputHasBeenTouched: false,
+    passwordInputHasBeenTouched: false,
+    repeatPasswordInputHasBeenTouched: false,
   };
 
+  private get isFormValid(): boolean {
+    const {
+      loginInputError,
+      passwordInputError,
+      repeatPasswordInputError,
+    } = this.state;
+
+    return (
+      loginInputError === null &&
+      passwordInputError === null &&
+      repeatPasswordInputError === null
+    );
+  }
+
   private onFormSubmit = (e: FormEvent): void => {
-    const formData = new FormData(e.target as HTMLFormElement);
+    const { passwordInputValue, userInputValue, mode } = this.state;
 
     e.preventDefault();
 
-    console.log(formData);
+    this.validateForm();
+
+    if (!this.isFormValid) {
+      return;
+    }
+
+    if (mode === 'register') {
+      createUserApi(userInputValue, passwordInputValue);
+    }
   };
+
+  private validateForm(): void {
+    this.setState((state) => ({
+      loginInputError: validateUserName(state.userInputValue),
+      passwordInputError: validateUserPassword(state.passwordInputValue),
+      repeatPasswordInputError: validateRepeatPassword(
+        state.passwordInputValue,
+        state.repeatPasswordInputValue,
+      ),
+    }));
+  }
 
   private onUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
     this.setState({
       userInputValue: e.target.value,
+    });
+  };
+
+  private onUserNameInputFocus = (e: FocusEvent<HTMLInputElement>): void => {
+    this.setState({
+      loginInputError: null,
+      loginInputHasBeenTouched: true,
+    });
+  };
+
+  private onUserNameInputBlur = (e: FocusEvent<HTMLInputElement>): void => {
+    this.setState({
+      loginInputError: validateUserName(e.target.value),
+    });
+  };
+
+  private onPasswordInputFocus = (e: FocusEvent<HTMLInputElement>): void => {
+    this.setState({
+      passwordInputError: null,
+      repeatPasswordInputError: null,
+      passwordInputHasBeenTouched: true,
+    });
+  };
+
+  private onPasswordInputBlur = (e: FocusEvent<HTMLInputElement>): void => {
+    const { value } = e.target;
+    const { repeatPasswordInputValue } = this.state;
+
+    this.setState({
+      passwordInputError: validateUserPassword(value),
+      repeatPasswordInputError: validateRepeatPassword(
+        value,
+        repeatPasswordInputValue,
+      ),
+    });
+  };
+
+  private onRepeatPasswordInputFocus = (
+    e: FocusEvent<HTMLInputElement>,
+  ): void => {
+    this.setState({
+      passwordInputError: null,
+      repeatPasswordInputError: null,
+      repeatPasswordInputHasBeenTouched: true,
+    });
+  };
+
+  private onRepeatPasswordInputBlur = (
+    e: FocusEvent<HTMLInputElement>,
+  ): void => {
+    const { value } = e.target;
+    const { passwordInputValue } = this.state;
+
+    this.setState({
+      passwordInputError: validateUserPassword(passwordInputValue),
+      repeatPasswordInputError: validateRepeatPassword(
+        passwordInputValue,
+        value,
+      ),
     });
   };
 
@@ -100,7 +218,11 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
 
   private renderUserNameInput(): React.ReactNode {
     const { classes } = this.props;
-    const { userInputValue } = this.state;
+    const {
+      userInputValue,
+      loginInputError,
+      loginInputHasBeenTouched,
+    } = this.state;
 
     return (
       <TextField
@@ -111,6 +233,13 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
         fullWidth={true}
         onChange={this.onUserChange}
         value={userInputValue}
+        onFocus={this.onUserNameInputFocus}
+        onBlur={this.onUserNameInputBlur}
+        helperText={(loginInputHasBeenTouched && loginInputError) || ' '}
+        FormHelperTextProps={{
+          className: classes.errorText,
+          error: !!loginInputError,
+        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -126,7 +255,12 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
 
   private renderPasswordInput(): React.ReactNode {
     const { classes } = this.props;
-    const { passwordInputValue, passwordVisible } = this.state;
+    const {
+      passwordInputValue,
+      passwordVisible,
+      passwordInputError,
+      passwordInputHasBeenTouched,
+    } = this.state;
 
     return (
       <TextField
@@ -137,6 +271,13 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
         fullWidth={true}
         onChange={this.onPasswordChange}
         value={passwordInputValue}
+        onFocus={this.onPasswordInputFocus}
+        onBlur={this.onPasswordInputBlur}
+        helperText={(passwordInputHasBeenTouched && passwordInputError) || ' '}
+        FormHelperTextProps={{
+          className: classes.errorText,
+          error: !!passwordInputError,
+        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -168,6 +309,8 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
       mode,
       repeatPasswordInputValue,
       repeatPasswordVisible,
+      repeatPasswordInputError,
+      repeatPasswordInputHasBeenTouched,
     } = this.state;
     let wrapperClassNames = classes.repeatPasswordInputWrapper;
 
@@ -185,6 +328,16 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
           fullWidth={true}
           onChange={this.onRepeatPasswordChange}
           value={repeatPasswordInputValue}
+          onFocus={this.onRepeatPasswordInputFocus}
+          onBlur={this.onRepeatPasswordInputBlur}
+          helperText={
+            (repeatPasswordInputHasBeenTouched && repeatPasswordInputError) ||
+            ' '
+          }
+          FormHelperTextProps={{
+            className: classes.errorText,
+            error: !!repeatPasswordInputError,
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -236,6 +389,9 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
       userInputValue: '',
       passwordInputValue: '',
       repeatPasswordInputValue: '',
+      repeatPasswordInputError: null,
+      loginInputError: null,
+      passwordInputError: null,
     }));
   };
 
@@ -253,10 +409,12 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
         {this.renderPasswordInput()}
         {this.renderRepeatPasswordInput()}
         <Button
+          className={classes.submitButton}
           fullWidth={true}
           variant="contained"
           type="submit"
           color="primary"
+          disabled={!this.isFormValid}
         >
           {buttonText}
         </Button>

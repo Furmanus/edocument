@@ -5,8 +5,4 @@ export class AppController {
   @Get('/')
   @Redirect('/login')
   public defaultPath(): void {}
-
-  @Get('/login')
-  @Render('login')
-  public loginPage(): void {}
 }
