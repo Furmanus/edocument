@@ -1,4 +1,7 @@
-import { PASSWORD_MIN_LENGTH, USERNAME_MIN_LENGTH } from './form';
+import {
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '../../../common/constants/loginForm';
 
 export const LoginTexts = {
   // FORM

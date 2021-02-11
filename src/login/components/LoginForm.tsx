@@ -15,7 +15,7 @@ import {
 } from '@material-ui/icons';
 import { LoginTexts } from '../contants/texts';
 import { ClassesType } from '../../common/interfaces/interfaces';
-import { createUserApi } from '../api/loginApi';
+import { createUserApi, loginUserApi } from '../api/loginApi';
 import {
   validateRepeatPassword,
   validateUserName,
@@ -91,28 +91,39 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
       loginInputError,
       passwordInputError,
       repeatPasswordInputError,
+      mode,
     } = this.state;
 
-    return (
-      loginInputError === null &&
-      passwordInputError === null &&
-      repeatPasswordInputError === null
-    );
+    if (mode === 'register') {
+      return (
+        loginInputError === null &&
+        passwordInputError === null &&
+        repeatPasswordInputError === null
+      );
+    }
+
+    return loginInputError === null && passwordInputError === null;
   }
 
-  private onFormSubmit = (e: FormEvent): void => {
+  private onFormSubmit = async (e: FormEvent): Promise<void> => {
     const { passwordInputValue, userInputValue, mode } = this.state;
 
     e.preventDefault();
 
-    this.validateForm();
+    if (mode === 'register') {
+      this.validateForm();
+    }
 
     if (!this.isFormValid) {
       return;
     }
 
     if (mode === 'register') {
-      createUserApi(userInputValue, passwordInputValue);
+      await createUserApi(userInputValue, passwordInputValue);
+      console.log('register');
+    } else {
+      await loginUserApi(userInputValue, passwordInputValue);
+      console.log('login');
     }
   };
 

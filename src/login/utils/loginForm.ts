@@ -1,5 +1,8 @@
 import { LoginTexts } from '../contants/texts';
-import { PASSWORD_MIN_LENGTH, USERNAME_MIN_LENGTH } from '../contants/form';
+import {
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '../../../common/constants/loginForm';
 
 export function validateUserName(userName: string): string {
   if (userName.length < USERNAME_MIN_LENGTH) {
