@@ -7,10 +7,14 @@ import {
   PASSWORD_MIN_LENGTH,
   USERNAME_MIN_LENGTH,
 } from '../../../../common/constants/loginForm';
+import { EncryptService } from './encrypt.service';
 
 @Injectable()
 export class AuthService {
-  public constructor(private usersService: UsersService) {}
+  public constructor(
+    private usersService: UsersService,
+    private encryptService: EncryptService,
+  ) {}
 
   public async validateUserRegister(
     userName: string,
@@ -50,8 +54,12 @@ export class AuthService {
     password: string,
   ): Promise<IApiError[]> {
     const user = await this.usersService.findUser(userName);
+    const doesPasswordMatch = await this.encryptService.compareText(
+      password,
+      user.password,
+    );
 
-    if (!user || user.password !== password) {
+    if (!user || !doesPasswordMatch) {
       return [
         {
           errorCode: ErrorCodes.InvalidUserOrPassword,

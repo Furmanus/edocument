@@ -4,12 +4,14 @@ import { UsersService } from './services/users.service';
 import { AuthService } from './services/auth.service';
 import { UserLoginValidationPipe } from './pipes/loginUser.pipe';
 import { RegisterUserValidationPipe } from './pipes/registerUser.pipe';
+import { EncryptService } from './services/encrypt.service';
 
 @Controller('/users')
 export class UsersController {
   public constructor(
     private usersService: UsersService,
     private authService: AuthService,
+    private encryptService: EncryptService,
   ) {}
 
   @Post()
@@ -17,7 +19,13 @@ export class UsersController {
   public async createUser(
     @Body(RegisterUserValidationPipe) body: UserDto,
   ): Promise<void> {
-    await this.usersService.create(body);
+    const { password, userName } = body;
+    const hashedPassword = await this.encryptService.hashText(password);
+
+    await this.usersService.create({
+      password: hashedPassword,
+      userName,
+    });
   }
 
   @Post('/auth')

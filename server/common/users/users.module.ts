@@ -6,6 +6,7 @@ import { User, UserSchema } from './schemas/user.schema';
 import { AuthService } from './services/auth.service';
 import { UserLoginValidationPipe } from './pipes/loginUser.pipe';
 import { RegisterUserValidationPipe } from './pipes/registerUser.pipe';
+import { EncryptService } from './services/encrypt.service';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { RegisterUserValidationPipe } from './pipes/registerUser.pipe';
     AuthService,
     UserLoginValidationPipe,
     RegisterUserValidationPipe,
+    EncryptService,
   ],
   controllers: [UsersController],
 })
