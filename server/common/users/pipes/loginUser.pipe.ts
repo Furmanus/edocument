@@ -1,8 +1,8 @@
 import {
   ArgumentMetadata,
-  BadRequestException,
   Injectable,
   PipeTransform,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserDto } from '../dto/users.dto';
 import { AuthService } from '../services/auth.service';
@@ -22,7 +22,7 @@ export class UserLoginValidationPipe implements PipeTransform {
     );
 
     if (validationErrors.length) {
-      throw new BadRequestException(validationErrors);
+      throw new UnauthorizedException(validationErrors);
     }
 
     return value;
