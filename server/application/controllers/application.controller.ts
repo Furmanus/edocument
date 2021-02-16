@@ -1,4 +1,12 @@
-import { Controller, Get, Res, Session } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  Session,
+} from '@nestjs/common';
 import { IApplicationSession } from '../../common/interfaces/interfaces';
 import { Response } from 'express';
 
@@ -16,5 +24,14 @@ export class ApplicationController {
     }
 
     return response.redirect('/login');
+  }
+
+  @Post('/logout')
+  @HttpCode(HttpStatus.ACCEPTED)
+  public logout(@Session() session: IApplicationSession): void {
+    session.destroy((err) => {
+      // TODO Add logger
+      console.error(err);
+    });
   }
 }

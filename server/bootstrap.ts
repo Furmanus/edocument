@@ -19,6 +19,7 @@ async function bootstrap(): Promise<void> {
       secret: process.env.SESSION_SECRET,
       resave: false,
       saveUninitialized: false,
+      cookie: { secure: process.env.MODE === 'production' },
     }),
   );
   app.useStaticAssets(resolve(__dirname, '..', 'dist'));
