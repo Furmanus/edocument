@@ -1,10 +1,18 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Session,
+} from '@nestjs/common';
 import { UserDto } from './dto/users.dto';
 import { UsersService } from './services/users.service';
 import { AuthService } from './services/auth.service';
 import { UserLoginValidationPipe } from './pipes/loginUser.pipe';
 import { RegisterUserValidationPipe } from './pipes/registerUser.pipe';
 import { EncryptService } from './services/encrypt.service';
+import { IApplicationSession } from '../interfaces/interfaces';
 
 @Controller('/users')
 export class UsersController {
@@ -17,6 +25,7 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.NO_CONTENT)
   public async createUser(
+    @Session() session: IApplicationSession,
     @Body(RegisterUserValidationPipe) body: UserDto,
   ): Promise<void> {
     const { password, userName } = body;
@@ -26,11 +35,16 @@ export class UsersController {
       password: hashedPassword,
       userName,
     });
+
+    session.userName = body.userName;
   }
 
   @Post('/auth')
   @HttpCode(HttpStatus.OK)
   public async loginUser(
+    @Session() session: IApplicationSession,
     @Body(UserLoginValidationPipe) body: UserDto,
-  ): Promise<void> {}
+  ): Promise<void> {
+    session.userName = body.userName;
+  }
 }

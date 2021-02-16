@@ -120,10 +120,12 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
 
     if (mode === 'register') {
       await createUserApi(userInputValue, passwordInputValue);
-      console.log('register');
+
+      window.location.pathname = '/app';
     } else {
       await loginUserApi(userInputValue, passwordInputValue);
-      console.log('login');
+
+      window.location.pathname = '/app';
     }
   };
 

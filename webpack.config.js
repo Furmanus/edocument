@@ -7,12 +7,23 @@ dotenv.config();
 const plugins = [
   new HtmlWebpackPlugin({
     title: 'E-Document',
+    chunks: ['login'],
     meta: {
       author: 'Łukasz Lach',
       viewport: 'width=device-width, initial-scale=1',
     },
     template: path.resolve(__dirname, 'templates', 'login.hbs'),
     filename: 'login.hbs',
+  }),
+  new HtmlWebpackPlugin({
+    title: 'E-Document',
+    chunks: ['app'],
+    meta: {
+      author: 'Łukasz Lach',
+      viewport: 'width=device-width, initial-scale=1',
+    },
+    template: path.resolve(__dirname, 'templates', 'app.hbs'),
+    filename: 'app.hbs',
   }),
 ];
 
@@ -23,6 +34,7 @@ module.exports = (env) => {
     mode: process.env.MODE,
     entry: {
       login: path.resolve(__dirname, 'src', 'login', 'login.tsx'),
+      app: path.resolve(__dirname, 'src', 'app', 'app.tsx'),
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
