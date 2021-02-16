@@ -39,6 +39,7 @@ interface IState {
 
 const styles = {
   form: {
+    maxWidth: 480,
     width: 'calc(100% - 70px)',
     padding: '30px 0',
   },
