@@ -10,10 +10,24 @@ import {
 import { IApplicationSession } from '../../common/interfaces/interfaces';
 import { Response } from 'express';
 
-@Controller('/app')
+@Controller()
 export class ApplicationController {
-  @Get('/')
+  @Get('/manage')
   public main(
+    @Session() session: IApplicationSession,
+    @Res() response: Response,
+  ): void {
+    const { userName } = session;
+
+    if (session.userName) {
+      return response.render('app', { userName });
+    }
+
+    return response.redirect('/login');
+  }
+
+  @Get('/settings')
+  public settings(
     @Session() session: IApplicationSession,
     @Res() response: Response,
   ): void {

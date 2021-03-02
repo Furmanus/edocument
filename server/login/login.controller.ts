@@ -10,7 +10,7 @@ export class LoginController {
     @Res() response: Response,
   ): void {
     if (session.userName) {
-      return response.redirect('/app');
+      return response.redirect('/manage');
     }
 
     return response.render('login');

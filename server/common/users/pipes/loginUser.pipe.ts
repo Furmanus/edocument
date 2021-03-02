@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { UserDto } from '../dto/users.dto';
 import { AuthService } from '../services/auth.service';
+import { User } from '../schemas/user.schema';
+import { isApiErrorArray } from '../interfaces/typeGuards';
 
 @Injectable()
 export class UserLoginValidationPipe implements PipeTransform {
@@ -14,17 +16,17 @@ export class UserLoginValidationPipe implements PipeTransform {
   public async transform(
     value: UserDto,
     metadata: ArgumentMetadata,
-  ): Promise<UserDto> {
+  ): Promise<User> {
     const { password, userName } = value;
-    const validationErrors = await this.authService.validateUserLogin(
+    const userValidation = await this.authService.validateUserLogin(
       userName,
       password,
     );
 
-    if (validationErrors.length) {
-      throw new UnauthorizedException(validationErrors);
+    if (isApiErrorArray(userValidation)) {
+      throw new UnauthorizedException(userValidation);
     }
 
-    return value;
+    return userValidation;
   }
 }

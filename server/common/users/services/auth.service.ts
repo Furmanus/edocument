@@ -8,6 +8,7 @@ import {
   USERNAME_MIN_LENGTH,
 } from '../../../../common/constants/loginForm';
 import { EncryptService } from './encrypt.service';
+import { User } from '../schemas/user.schema';
 
 @Injectable()
 export class AuthService {
@@ -52,7 +53,7 @@ export class AuthService {
   public async validateUserLogin(
     userName: string,
     password: string,
-  ): Promise<IApiError[]> {
+  ): Promise<IApiError[] | User> {
     const user = await this.usersService.findUser(userName);
     const doesPasswordMatch = await this.encryptService.compareText(
       password,
@@ -74,6 +75,6 @@ export class AuthService {
       ];
     }
 
-    return [];
+    return user;
   }
 }

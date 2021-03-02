@@ -1,0 +1,22 @@
+export const enum DocumentSettingsTexts {
+  HeadingCreate = 'Add document',
+  HeadingEdit = 'Edit document',
+  SubmitButtonCreate = 'Add',
+  SubmitButtonEdit = 'Edit',
+  Cancel = 'Cancel',
+  DocumentNameInputLabel = 'Name',
+  DocumentDateInputLabel = 'Date',
+  DocumentTagsSelectLabel = 'Tags',
+  DocumentTagsSelectPlaceholder = 'Select tags',
+  DocumentTagsSelectNoTagsPlaceholder = "You don't have any tags",
+  DocumentTagsSelectLoadingPlaceholder = 'Loading tags',
+  AddTagButton = 'Add tag',
+  // ADD TAG MODAL
+  AddTagHeading = 'Add tag',
+  AddTagTagNameInputLabel = 'Tag name',
+  AddTagCancelButton = 'Cancel',
+  AddTagSubmitButton = 'Add',
+  TagAlreadyExistError = 'Tag already exists',
+  TagNameTooShortError = 'Tag name too short, minimum 3 chars required',
+  AddTagSubmitUnknownError = 'Failed to create tag',
+}

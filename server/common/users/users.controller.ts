@@ -13,6 +13,7 @@ import { UserLoginValidationPipe } from './pipes/loginUser.pipe';
 import { RegisterUserValidationPipe } from './pipes/registerUser.pipe';
 import { EncryptService } from './services/encrypt.service';
 import { IApplicationSession } from '../interfaces/interfaces';
+import { User } from './schemas/user.schema';
 
 @Controller('/users')
 export class UsersController {
@@ -30,21 +31,22 @@ export class UsersController {
   ): Promise<void> {
     const { password, userName } = body;
     const hashedPassword = await this.encryptService.hashText(password);
-
-    await this.usersService.create({
+    const user = await this.usersService.create({
       password: hashedPassword,
       userName,
     });
 
     session.userName = body.userName;
+    session.userId = user._id;
   }
 
   @Post('/auth')
   @HttpCode(HttpStatus.OK)
   public async loginUser(
     @Session() session: IApplicationSession,
-    @Body(UserLoginValidationPipe) body: UserDto,
+    @Body(UserLoginValidationPipe) body: User & { _id?: string },
   ): Promise<void> {
     session.userName = body.userName;
+    session.userId = body._id;
   }
 }
