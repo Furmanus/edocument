@@ -24,6 +24,8 @@ interface IProps {
 
 const modalStyles = {
   content: {
+    width: '100%',
+    height: '100%',
     maxWidth: 640,
     maxHeight: 480,
     left: '50%',
