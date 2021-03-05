@@ -10,6 +10,8 @@ export const enum DocumentSettingsTexts {
   DocumentTagsSelectPlaceholder = 'Select tags',
   DocumentTagsSelectNoTagsPlaceholder = "You don't have any tags",
   DocumentTagsSelectLoadingPlaceholder = 'Loading tags',
+  DocumentNetValueInputLabel = 'Net value',
+  DocumentGrossValueInputLabel = 'Gross value',
   AddTagButton = 'Add tag',
   // ADD TAG MODAL
   AddTagHeading = 'Add tag',

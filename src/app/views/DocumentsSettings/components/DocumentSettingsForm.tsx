@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  InputAdornment,
   Paper,
   TextField,
   Typography,
@@ -14,6 +15,8 @@ import { FormApi } from 'final-form';
 import { Autocomplete } from '@material-ui/lab';
 import { DocumentSettingsFormAddTagLink } from './DocumentSettingsFormAddTagLink';
 import { DocumentSettingsAddTagModal } from './DocumentSettingsAddTagModal';
+import { ApplicationApi } from '../../../api/api';
+import { CreateDocumentFormFields } from '../../../../../common/constants/createDocumentForm';
 
 const styles = {
   wrapper: {
@@ -40,6 +43,9 @@ const styles = {
   formFieldAutoComplete: {
     marginTop: 16,
     marginBottom: 20,
+  },
+  valueInputWrapper: {
+    maxWidth: 'calc((100% - 20px) / 2)',
   },
 };
 
@@ -75,8 +81,8 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
 
   private async fetchTags(): Promise<void> {
     this.setState({ isFetchingTags: true });
-    // TODO fetch tags from server
-    const tags = await Promise.resolve(['test', 'test1', 'test2', 'test3']);
+
+    const tags = await ApplicationApi.getTags();
 
     this.setState({ isFetchingTags: false, tags });
   }
@@ -97,6 +103,9 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
         className={className}
         fullWidth={true}
         label={DocumentSettingsTexts.DocumentNameInputLabel}
+        InputLabelProps={{
+          shrink: true,
+        }}
         {...inputProps}
       />
     );
@@ -176,6 +185,50 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     );
   };
 
+  private renderNetDocumentValue = (
+    props: FieldRenderProps<string, HTMLInputElement>,
+  ): React.ReactNode => {
+    const { input: inputProps, className } = props;
+
+    return (
+      <TextField
+        size="medium"
+        type="number"
+        className={className}
+        label={DocumentSettingsTexts.DocumentNetValueInputLabel}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        InputProps={{
+          startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
+        }}
+        {...inputProps}
+      />
+    );
+  };
+
+  private renderGrossDocumentValue = (
+    props: FieldRenderProps<string, HTMLInputElement>,
+  ): React.ReactNode => {
+    const { input: inputProps, className } = props;
+
+    return (
+      <TextField
+        size="medium"
+        type="number"
+        className={className}
+        label={DocumentSettingsTexts.DocumentGrossValueInputLabel}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        InputProps={{
+          startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
+        }}
+        {...inputProps}
+      />
+    );
+  };
+
   private onAddTagClick = (): void => {
     this.setState({
       isAddTagModalOpen: true,
@@ -186,6 +239,8 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     this.setState({
       isAddTagModalOpen: false,
     });
+
+    this.fetchTags();
   };
 
   public render(): JSX.Element {
@@ -210,21 +265,39 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
                   {headingText}
                 </Typography>
                 <Field
-                  name="documentName"
+                  name={CreateDocumentFormFields.DocumentName}
                   className={classes.formField}
                   render={this.renderNameInput}
                 />
                 <Field
-                  name="documentDate"
+                  name={CreateDocumentFormFields.DocumentDate}
                   className={classes.formField}
                   render={this.renderDateInput}
                 />
                 <Field
-                  name="documentTags"
+                  name={CreateDocumentFormFields.DocumentTags}
                   className={classes.formFieldAutoComplete}
                   render={this.renderTagsList}
                   multiple={true}
                 />
+                <Box
+                  width="100%"
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Field
+                    name={CreateDocumentFormFields.DocumentNetValue}
+                    className={`${classes.formField} ${classes.valueInputWrapper}`}
+                    render={this.renderNetDocumentValue}
+                  />
+                  <Field
+                    name={CreateDocumentFormFields.DocumentGrossValue}
+                    className={`${classes.formField} ${classes.valueInputWrapper}`}
+                    render={this.renderGrossDocumentValue}
+                  />
+                </Box>
                 <Box
                   width="100%"
                   margin="20px 0"

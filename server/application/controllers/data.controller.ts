@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -23,12 +24,22 @@ export class DataController {
   public async addTag(
     @Body(CreateTagValidationPipe) createTagDto: CreateTagDto,
     @Session() session: IApplicationSession,
-  ): Promise<void> {
+  ): Promise<string> {
     const { tagName } = createTagDto;
 
-    this.tagsService.create({
-      owner: session.userId,
-      tagName,
-    });
+    return this.tagsService
+      .create({
+        owner: session.userId,
+        tagName,
+      })
+      .then((tag) => tag.tagName);
+  }
+
+  @Get('/tags')
+  @HttpCode(HttpStatus.OK)
+  public getTags(@Session() session: IApplicationSession): Promise<string[]> {
+    return this.tagsService
+      .findAll(session.userId)
+      .then((tags) => tags.map((tag) => tag.tagName));
   }
 }
