@@ -19,4 +19,5 @@ export const enum DocumentSettingsTexts {
   TagAlreadyExistError = 'Tag already exists',
   TagNameTooShortError = 'Tag name too short, minimum 3 chars required',
   AddTagSubmitUnknownError = 'Failed to create tag',
+  AddTagSuccessSnackBarText = 'Tag created successfully',
 }

@@ -8,12 +8,14 @@ import {
   Typography,
 } from '@material-ui/core';
 import { DocumentSettingsTexts } from '../constants/documentSettingsTexts';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { Field, FieldRenderProps, Form } from 'react-final-form';
 import { ApplicationApi } from '../../../api/api';
 import { CreateTagFormFields } from '../../../../../common/constants/createTagForm';
 import { addTagErrorCodeToMessageMap } from '../constants/addTagFormErrors';
 import { AppButton } from '../../../../common/components/AppButton';
+import { AppContext } from '../../../AppRoot';
+import { openSnackBarAction } from '../../../actions/appActions';
 
 Modal.setAppElement('#app');
 
@@ -24,10 +26,6 @@ interface IProps {
 
 const modalStyles = {
   content: {
-    width: '100%',
-    height: '100%',
-    maxWidth: 640,
-    maxHeight: 480,
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
@@ -40,7 +38,7 @@ const useStyles = makeStyles({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     alignItems: 'center',
     margin: 'auto',
   },
@@ -100,11 +98,22 @@ function renderTagNameInput(
 export function DocumentSettingsAddTagModal(props: IProps) {
   const classes = useStyles();
   const { isOpen, onClose } = props;
+  const { dispatch } = useContext(AppContext);
   const onSubmit = useCallback(async (formData: { tagName: string }) => {
     try {
       await ApplicationApi.createTag(formData.tagName);
+
+      dispatch(
+        openSnackBarAction(
+          DocumentSettingsTexts.AddTagSuccessSnackBarText,
+          'success',
+        ),
+      );
+
+      onClose();
     } catch (e) {
       const errors = e.response?.data?.message;
+      let globalError;
 
       if (Array.isArray(errors)) {
         const reducedErrors = errors.reduce((result, error) => {
@@ -112,11 +121,15 @@ export function DocumentSettingsAddTagModal(props: IProps) {
             result[error.fieldName] =
               addTagErrorCodeToMessageMap[error.errorCode];
           } else {
-            const globalError = addTagErrorCodeToMessageMap[error.errorCode];
+            globalError = addTagErrorCodeToMessageMap[error.errorCode];
           }
 
           return result;
         }, {});
+
+        if (globalError) {
+          dispatch(openSnackBarAction(globalError, 'error'));
+        }
 
         return reducedErrors;
       }
