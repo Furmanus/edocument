@@ -6,8 +6,10 @@ import * as helmet from 'helmet';
 import * as expressSession from 'express-session';
 import { resolve } from 'path';
 import { AppModule } from './app.module';
+import MongoStore from 'connect-mongo';
 
 const { PORT } = process.env;
+const mongoStore = MongoStore.create({ mongoUrl: process.env.DATABASE_URL });
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,6 +22,7 @@ async function bootstrap(): Promise<void> {
       resave: false,
       saveUninitialized: false,
       cookie: { secure: process.env.MODE === 'production' },
+      store: mongoStore,
     }),
   );
   app.useStaticAssets(resolve(__dirname, '..', 'dist'));

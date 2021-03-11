@@ -17,6 +17,9 @@ import { DocumentSettingsFormAddTagLink } from './DocumentSettingsFormAddTagLink
 import { DocumentSettingsAddTagModal } from './DocumentSettingsAddTagModal';
 import { ApplicationApi } from '../../../api/api';
 import { CreateDocumentFormFields } from '../../../../../common/constants/createDocumentForm';
+import { DropzoneArea } from 'material-ui-dropzone';
+import { fileUploadImagePreviewProps } from '../constants/fileUpload';
+import { IDocumentSettingsFormData } from '../interfaces/interfaces';
 
 const styles = {
   wrapper: {
@@ -47,6 +50,13 @@ const styles = {
   valueInputWrapper: {
     maxWidth: 'calc((100% - 20px) / 2)',
   },
+  fileUpload: {
+    marginTop: 15,
+    borderWidth: 1,
+    '&-error': {
+      borderColor: 'red',
+    },
+  },
 };
 
 interface IProps {
@@ -58,10 +68,6 @@ interface IState {
   tags: string[];
   isFetchingTags: boolean;
   isAddTagModalOpen: boolean;
-}
-
-interface IFormValues {
-  documentName: string;
 }
 
 class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
@@ -87,8 +93,17 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     this.setState({ isFetchingTags: false, tags });
   }
 
-  private onFormSubmit = (value: IFormValues, form: FormApi): void => {
-    console.log(value, form);
+  private onFormSubmit = async (
+    value: IDocumentSettingsFormData,
+    form: FormApi,
+  ): Promise<void> => {
+    try {
+      await ApplicationApi.createDocument(value);
+
+      console.log('success');
+    } catch (e) {
+      console.log('error', e);
+    }
   };
 
   private renderNameInput = (
@@ -145,7 +160,7 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     if (isFetchingTags) {
       placeholder = DocumentSettingsTexts.DocumentTagsSelectLoadingPlaceholder;
     }
-
+    // TODO dorobic loader przy pobieraniu tagow
     return (
       <Autocomplete
         multiple
@@ -229,6 +244,27 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     );
   };
 
+  private renderDropZone = (
+    props: FieldRenderProps<string, HTMLInputElement>,
+  ): React.ReactNode => {
+    const { input: inputProps, meta } = props;
+    const { classes } = this.props;
+    // TODO use something better or write own file upload component
+    // TODO don't pass new instance of object with every render
+    return (
+      <DropzoneArea
+        classes={{ root: classes.fileUpload }}
+        dropzoneText={DocumentSettingsTexts.DropZoneText}
+        filesLimit={4}
+        previewGridProps={fileUploadImagePreviewProps}
+        showAlerts={false}
+        maxFileSize={1024 * 1024}
+        {...inputProps}
+        {...meta}
+      />
+    );
+  };
+
   private onAddTagClick = (): void => {
     this.setState({
       isAddTagModalOpen: true,
@@ -298,6 +334,10 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
                     render={this.renderGrossDocumentValue}
                   />
                 </Box>
+                <Field
+                  name={CreateDocumentFormFields.DocumentFile}
+                  render={this.renderDropZone}
+                />
                 <Box
                   width="100%"
                   margin="20px 0"

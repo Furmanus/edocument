@@ -13,6 +13,7 @@ export const enum DocumentSettingsTexts {
   DocumentNetValueInputLabel = 'Net value',
   DocumentGrossValueInputLabel = 'Gross value',
   AddTagButton = 'Add tag',
+  DropZoneText = 'Drag and drop file or click',
   // ADD TAG MODAL
   AddTagHeading = 'Add tag',
   AddTagTagNameInputLabel = 'Tag name',
