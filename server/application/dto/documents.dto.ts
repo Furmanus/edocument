@@ -4,5 +4,5 @@ export class CreateDocumentDto {
   public documentFile: File;
   public documentGrossValue: number;
   public documentNetValue: number;
-  public documentTags: string[];
+  public documentTags: string;
 }

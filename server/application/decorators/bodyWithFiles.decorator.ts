@@ -7,6 +7,7 @@ export const BodyWithFiles = createParamDecorator(
     return {
       ...request.body,
       files: request.files,
+      userId: request.session.userId,
     };
   },
 );

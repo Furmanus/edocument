@@ -52,7 +52,10 @@ export class CreateDocumentValidationPipe implements PipeTransform {
         message: 'Document name too long, max. 32 chars allowed',
       });
     }
-    if (documentTags && !documentTags.every((tag) => userTags.includes(tag))) {
+    if (
+      documentTags &&
+      !documentTags.split(',').every((tag) => userTags.includes(tag))
+    ) {
       errors.push({
         fieldName: CreateDocumentFormFields.DocumentTags,
         errorCode: ErrorCodes.InvalidTag,
