@@ -27,6 +27,7 @@ import { createDocumentErrorCodeToMessageMap } from '../constants/createDocument
 import { AppContext } from '../../../AppRoot';
 import { openSnackBarAction } from '../../../actions/appActions';
 import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHint';
+import { AppButton } from '../../../../common/components/AppButton';
 
 const styles = {
   wrapper: {
@@ -410,12 +411,19 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
                   justifyContent="flex-end"
                   alignItems="center"
                 >
-                  <Button color="primary">
+                  <Button color="primary" disabled={props.submitting}>
                     {DocumentSettingsTexts.Cancel}
                   </Button>
-                  <Button variant="contained" color="primary" type="submit">
+                  <AppButton
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    size="medium"
+                    disabled={props.submitting}
+                    isLoading={props.submitting}
+                  >
                     {submitButtonText}
-                  </Button>
+                  </AppButton>
                 </Box>
               </form>
             )}
