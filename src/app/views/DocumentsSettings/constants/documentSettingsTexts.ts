@@ -28,6 +28,7 @@ export const enum DocumentSettingsTexts {
   TagNameTooShortError = 'Tag name too short, minimum 3 chars required',
   AddTagSubmitUnknownError = 'Failed to create tag',
   AddTagSuccessSnackBarText = 'Tag created successfully',
+  AddTagInternalServerError = 'Internal server error',
   // CREATE DOCUMENT ERRORS
   DocumentErrorNameEmpty = 'Required field',
   DocumentErrorNameTooLong = 'Max 32 chars allowed',

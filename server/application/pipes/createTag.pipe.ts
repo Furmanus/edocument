@@ -30,7 +30,7 @@ export class CreateTagValidationPipe implements PipeTransform {
       ]);
     }
 
-    if (tagName.length < 3) {
+    if (!tagName || tagName.length < 3) {
       throw new BadRequestException([
         {
           errorCode: ErrorCodes.TagNameTooShort,

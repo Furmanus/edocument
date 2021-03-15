@@ -133,6 +133,13 @@ export function DocumentSettingsAddTagModal(props: IProps) {
         }
 
         return reducedErrors;
+      } else {
+        dispatch(
+          openSnackBarAction(
+            DocumentSettingsTexts.AddTagInternalServerError,
+            'error',
+          ),
+        );
       }
     }
   }, []);
