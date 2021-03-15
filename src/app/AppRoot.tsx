@@ -5,11 +5,24 @@ import { AppNavigation } from './components/AppNavigation';
 import { Box } from '@material-ui/core';
 import { AppLoader } from './components/Loader';
 import { AppSnackbar } from '../common/components/AppSnackbar';
-import { useCallback, useMemo, useReducer } from 'react';
-import { appReducer, initialState } from './reducer/appReducer';
+import { Dispatch, useCallback, useMemo, useReducer } from 'react';
+import {
+  appReducer,
+  IApplicationState,
+  initialState,
+} from './reducer/appReducer';
 import { closeSnackBarAction } from './actions/appActions';
+import { AppActionTypes } from './actions/appActions.interfaces';
 
-export const AppContext = React.createContext({ state: null, dispatch: null });
+interface IAppContext {
+  state: IApplicationState;
+  dispatch: Dispatch<AppActionTypes>;
+}
+
+export const AppContext = React.createContext<IAppContext>({
+  state: null,
+  dispatch: null,
+});
 
 const [DocumentsManage, DocumentSettings] = [
   () =>

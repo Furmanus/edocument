@@ -62,25 +62,7 @@ export class CreateDocumentValidationPipe implements PipeTransform {
         message: 'Field contains invalid tags',
       });
     }
-    if (typeof documentNetValue !== 'number' && documentNetValue) {
-      errors.push({
-        fieldName: CreateDocumentFormFields.DocumentNetValue,
-        errorCode: ErrorCodes.NetValueInvalidType,
-        message: 'Value must be a number',
-      });
-    }
-    if (typeof documentGrossValue !== 'number' && documentGrossValue) {
-      errors.push({
-        fieldName: CreateDocumentFormFields.DocumentGrossValue,
-        errorCode: ErrorCodes.GrossValueInvalidType,
-        message: 'Value must be a number',
-      });
-    }
-    if (
-      typeof documentNetValue === 'number' &&
-      typeof documentGrossValue === 'number' &&
-      documentNetValue > documentGrossValue
-    ) {
+    if (Number(documentNetValue) > Number(documentGrossValue)) {
       errors.push({
         fieldName: CreateDocumentFormFields.DocumentNetValue,
         errorCode: ErrorCodes.NetValueGreaterThanNetValue,

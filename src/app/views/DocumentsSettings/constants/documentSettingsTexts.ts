@@ -1,3 +1,5 @@
+import { DocumentFormConstants } from '../../../../../common/constants/createDocumentForm';
+
 export const enum DocumentSettingsTexts {
   HeadingCreate = 'Add document',
   HeadingEdit = 'Edit document',
@@ -5,6 +7,7 @@ export const enum DocumentSettingsTexts {
   SubmitButtonEdit = 'Edit',
   Cancel = 'Cancel',
   DocumentNameInputLabel = 'Name',
+  DocumentNameHelperText = 'Required field. Max 32 char allowed',
   DocumentDateInputLabel = 'Date',
   DocumentTagsSelectLabel = 'Tags',
   DocumentTagsSelectPlaceholder = 'Select tags',
@@ -14,6 +17,8 @@ export const enum DocumentSettingsTexts {
   DocumentGrossValueInputLabel = 'Gross value',
   AddTagButton = 'Add tag',
   DropZoneText = 'Drag and drop file or click',
+  DropZoneHelperText = 'Allowed files: {{files}}',
+  DocumentCreatedSnackbarText = 'Document successfully created',
   // ADD TAG MODAL
   AddTagHeading = 'Add tag',
   AddTagTagNameInputLabel = 'Tag name',
@@ -23,4 +28,15 @@ export const enum DocumentSettingsTexts {
   TagNameTooShortError = 'Tag name too short, minimum 3 chars required',
   AddTagSubmitUnknownError = 'Failed to create tag',
   AddTagSuccessSnackBarText = 'Tag created successfully',
+  // CREATE DOCUMENT ERRORS
+  DocumentErrorNameEmpty = 'Required field',
+  DocumentErrorNameTooLong = 'Max 32 chars allowed',
+  DocumentErrorInvalidTag = "One of tags doesn't exist",
+  DocumentErrorNetValueInvalidType = 'Value must be a number type',
+  DocumentErrorGrossValueInvalidType = 'Value must be a number type',
+  DocumentErrorNetValueGreaterThanGrossValue = 'Invalid amount',
+  DocumentErrorTooManyFiles = 'Max 4 files allowed',
+  DocumentErrorFileInvalidType = 'File invalid type',
+  DocumentErrorNoFile = 'At least 1 file required',
+  DocumentErrorUnknownError = 'Failed to create document',
 }

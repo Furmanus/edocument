@@ -16,10 +16,17 @@ import { Autocomplete } from '@material-ui/lab';
 import { DocumentSettingsFormAddTagLink } from './DocumentSettingsFormAddTagLink';
 import { DocumentSettingsAddTagModal } from './DocumentSettingsAddTagModal';
 import { ApplicationApi } from '../../../api/api';
-import { CreateDocumentFormFields } from '../../../../../common/constants/createDocumentForm';
+import {
+  acceptedFileUploadFiles,
+  CreateDocumentFormFields,
+} from '../../../../../common/constants/createDocumentForm';
 import { DropzoneArea } from 'material-ui-dropzone';
 import { fileUploadImagePreviewProps } from '../constants/fileUpload';
 import { IDocumentSettingsFormData } from '../interfaces/interfaces';
+import { createDocumentErrorCodeToMessageMap } from '../constants/createDocumentFormErrors';
+import { AppContext } from '../../../AppRoot';
+import { openSnackBarAction } from '../../../actions/appActions';
+import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHint';
 
 const styles = {
   wrapper: {
@@ -40,24 +47,35 @@ const styles = {
     alignItems: 'center',
     padding: '20px 40px',
   },
-  formField: {
-    marginBottom: 20,
-  },
   formFieldAutoComplete: {
     marginTop: 16,
     marginBottom: 20,
   },
   valueInputWrapper: {
-    maxWidth: 'calc((100% - 20px) / 2)',
+    maxWidth: 'calc(100% - 16px)',
   },
   fileUpload: {
     marginTop: 15,
     borderWidth: 1,
-    '&-error': {
-      borderColor: 'red',
+    transition: 'border 0.3s ease-in-out',
+    '&.error': {
+      border: '2px solid red',
     },
   },
+  fileUploadHelper: {
+    fontSize: 10,
+    minHeight: 16,
+    transition: 'color 0.3s ease-in-out',
+  },
 };
+const grossValueWrapperProps = { alignItems: 'flex-end' };
+const filesAccepted = acceptedFileUploadFiles
+  .map((fileType) => fileType.replace('image/', '.'))
+  .join(' ');
+const dropZoneHelperText = DocumentSettingsTexts.DropZoneHelperText.replace(
+  '{{files}}',
+  filesAccepted,
+);
 
 interface IProps {
   mode: 'create' | 'edit';
@@ -71,6 +89,7 @@ interface IState {
 }
 
 class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
+  public static contextType = AppContext;
   public static defaultProps: Partial<IProps> = {
     mode: 'create',
   };
@@ -80,6 +99,8 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     isFetchingTags: false,
     isAddTagModalOpen: false,
   };
+
+  public context: React.ContextType<typeof AppContext>;
 
   public componentDidMount(): void {
     this.fetchTags();
@@ -97,31 +118,59 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     value: IDocumentSettingsFormData,
     form: FormApi,
   ): Promise<void> => {
+    const { dispatch } = this.context;
+
     try {
       await ApplicationApi.createDocument(value);
 
-      console.log('success');
+      dispatch(
+        openSnackBarAction(
+          DocumentSettingsTexts.DocumentCreatedSnackbarText,
+          'success',
+        ),
+      );
     } catch (e) {
-      console.log('error', e);
+      const errors = e.response?.data?.message;
+      let preparedErrors;
+      let globalError;
+
+      if (Array.isArray(errors)) {
+        preparedErrors = errors.reduce((result, error) => {
+          if (error.fieldName) {
+            result[error.fieldName] =
+              createDocumentErrorCodeToMessageMap[error.errorCode];
+          } else {
+            globalError = createDocumentErrorCodeToMessageMap[error.errorCode];
+          }
+
+          return result;
+        }, {});
+      }
+
+      if (globalError) {
+        dispatch(openSnackBarAction(globalError, 'error'));
+      }
+
+      if (preparedErrors && Object.keys(preparedErrors).length) {
+        return preparedErrors;
+      }
     }
   };
 
   private renderNameInput = (
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
-    const { input: inputProps, className } = props;
-
     return (
-      <TextField
+      <TextFieldWithHint
         size="medium"
         type="text"
-        className={className}
         fullWidth={true}
         label={DocumentSettingsTexts.DocumentNameInputLabel}
         InputLabelProps={{
           shrink: true,
         }}
-        {...inputProps}
+        helperText={DocumentSettingsTexts.DocumentNameHelperText}
+        fieldProps={props}
       />
     );
   };
@@ -129,19 +178,16 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
   private renderDateInput = (
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
-    const { input: inputProps, className } = props;
-
     return (
-      <TextField
+      <TextFieldWithHint
         size="medium"
         type="date"
-        className={className}
         fullWidth={true}
         label={DocumentSettingsTexts.DocumentDateInputLabel}
         InputLabelProps={{
           shrink: true,
         }}
-        {...inputProps}
+        fieldProps={props}
       />
     );
   };
@@ -161,6 +207,7 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
       placeholder = DocumentSettingsTexts.DocumentTagsSelectLoadingPlaceholder;
     }
     // TODO dorobic loader przy pobieraniu tagow
+    // TODO dorobic obsluge bledow
     return (
       <Autocomplete
         multiple
@@ -203,13 +250,13 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
   private renderNetDocumentValue = (
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
-    const { input: inputProps, className } = props;
+    const { className } = props;
 
     return (
-      <TextField
+      <TextFieldWithHint
+        additionalClasses={className}
         size="medium"
         type="number"
-        className={className}
         label={DocumentSettingsTexts.DocumentNetValueInputLabel}
         InputLabelProps={{
           shrink: true,
@@ -217,7 +264,7 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
         InputProps={{
           startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
         }}
-        {...inputProps}
+        fieldProps={props}
       />
     );
   };
@@ -225,21 +272,22 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
   private renderGrossDocumentValue = (
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
-    const { input: inputProps, className } = props;
+    const { className } = props;
 
     return (
-      <TextField
+      <TextFieldWithHint
+        additionalClasses={className}
         size="medium"
         type="number"
-        className={className}
         label={DocumentSettingsTexts.DocumentGrossValueInputLabel}
+        wrapperProps={grossValueWrapperProps}
         InputLabelProps={{
           shrink: true,
         }}
         InputProps={{
           startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
         }}
-        {...inputProps}
+        fieldProps={props}
       />
     );
   };
@@ -249,19 +297,37 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
   ): React.ReactNode => {
     const { input: inputProps, meta } = props;
     const { classes } = this.props;
+    const { error, submitError, touched, modifiedSinceLastSubmit } = meta;
+    const errorToDisplay =
+      touched && !modifiedSinceLastSubmit && (error || submitError);
     // TODO use something better or write own file upload component
     // TODO don't pass new instance of object with every render
+    // TODO move to separate component
     return (
-      <DropzoneArea
-        classes={{ root: classes.fileUpload }}
-        dropzoneText={DocumentSettingsTexts.DropZoneText}
-        filesLimit={4}
-        previewGridProps={fileUploadImagePreviewProps}
-        showAlerts={false}
-        maxFileSize={1024 * 1024}
-        {...inputProps}
-        {...meta}
-      />
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="flex-start"
+        width="100%"
+      >
+        <DropzoneArea
+          classes={{
+            root: `${classes.fileUpload} ${errorToDisplay ? 'error' : ''}`,
+          }}
+          dropzoneText={DocumentSettingsTexts.DropZoneText}
+          filesLimit={4}
+          previewGridProps={fileUploadImagePreviewProps}
+          showAlerts={false}
+          maxFileSize={1024 * 1024}
+          {...inputProps}
+        />
+        <Typography
+          className={classes.fileUploadHelper}
+          color={errorToDisplay ? 'error' : 'textPrimary'}
+        >
+          {errorToDisplay || dropZoneHelperText}
+        </Typography>
+      </Box>
     );
   };
 
@@ -302,12 +368,10 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
                 </Typography>
                 <Field
                   name={CreateDocumentFormFields.DocumentName}
-                  className={classes.formField}
                   render={this.renderNameInput}
                 />
                 <Field
                   name={CreateDocumentFormFields.DocumentDate}
-                  className={classes.formField}
                   render={this.renderDateInput}
                 />
                 <Field
@@ -325,12 +389,12 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
                 >
                   <Field
                     name={CreateDocumentFormFields.DocumentNetValue}
-                    className={`${classes.formField} ${classes.valueInputWrapper}`}
+                    className={classes.valueInputWrapper}
                     render={this.renderNetDocumentValue}
                   />
                   <Field
                     name={CreateDocumentFormFields.DocumentGrossValue}
-                    className={`${classes.formField} ${classes.valueInputWrapper}`}
+                    className={classes.valueInputWrapper}
                     render={this.renderGrossDocumentValue}
                   />
                 </Box>
