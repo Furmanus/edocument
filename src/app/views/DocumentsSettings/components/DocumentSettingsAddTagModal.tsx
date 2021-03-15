@@ -29,6 +29,7 @@ const modalStyles = {
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
+    minWidth: 300,
   },
 };
 const useStyles = makeStyles({
