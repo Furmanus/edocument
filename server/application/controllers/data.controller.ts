@@ -17,6 +17,8 @@ import { CreateDocumentDto } from '../dto/documents.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentValidationPipe } from '../pipes/createDocument.pipe';
 import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
+import { DocumentsService } from '../services/documents.service';
+import { AwsService } from '../services/aws.service';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -25,7 +27,11 @@ export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
 @Controller('/data')
 @UseInterceptors(UserRequestInterceptor)
 export class DataController {
-  public constructor(private tagsService: TagsService) {}
+  public constructor(
+    private tagsService: TagsService,
+    private documentsService: DocumentsService,
+    private awsService: AwsService,
+  ) {}
 
   @Post('/tags')
   @HttpCode(HttpStatus.CREATED)
@@ -57,6 +63,16 @@ export class DataController {
   public async addDocument(
     @BodyWithFiles(CreateDocumentValidationPipe) body: CreateDocumentBody,
   ): Promise<void> {
-    console.log('request is valid and passed validation');
+    const uploadedFilesUrls = await this.awsService.uploadFiles(body.files);
+    const createdDocument = await this.documentsService.create({
+      documentName: body.documentName,
+      documentDate: body.documentDate,
+      documentTags: body.documentTags,
+      documentNetValue: body.documentNetValue,
+      documentGrossValue: body.documentGrossValue,
+      documentFile: uploadedFilesUrls,
+    });
+
+    console.log('created document', createdDocument);
   }
 }
