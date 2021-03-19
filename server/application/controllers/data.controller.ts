@@ -19,6 +19,7 @@ import { CreateDocumentValidationPipe } from '../pipes/createDocument.pipe';
 import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
 import { DocumentsService } from '../services/documents.service';
 import { AwsService } from '../services/aws.service';
+import { AppDocument } from '../schemas/document.schema';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -62,17 +63,19 @@ export class DataController {
   @UseInterceptors(AnyFilesInterceptor())
   public async addDocument(
     @BodyWithFiles(CreateDocumentValidationPipe) body: CreateDocumentBody,
-  ): Promise<void> {
-    const uploadedFilesUrls = await this.awsService.uploadFiles(body.files);
+    @Session() session: IApplicationSession,
+  ): Promise<AppDocument> {
+    const uploadedFilesKeys = await this.awsService.uploadFiles(body.files);
     const createdDocument = await this.documentsService.create({
       documentName: body.documentName,
       documentDate: body.documentDate,
       documentTags: body.documentTags,
       documentNetValue: body.documentNetValue,
       documentGrossValue: body.documentGrossValue,
-      documentFile: uploadedFilesUrls,
+      documentFile: uploadedFilesKeys,
+      owner: session.userId,
     });
 
-    console.log('created document', createdDocument);
+    return createdDocument;
   }
 }
