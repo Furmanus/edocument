@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import * as Loadable from 'react-loadable';
 import { AppNavigation } from './components/AppNavigation';
 import { Box } from '@material-ui/core';
@@ -13,6 +13,7 @@ import {
 } from './reducer/appReducer';
 import { closeSnackBarAction } from './actions/appActions';
 import { AppActionTypes } from './actions/appActions.interfaces';
+import { history } from './utils/history';
 
 interface IAppContext {
   state: IApplicationState;
@@ -59,7 +60,7 @@ export function AppRoot(): JSX.Element {
         alignItems="center"
       >
         <AppContext.Provider value={contextValue}>
-          <BrowserRouter basename="/app">
+          <Router history={history}>
             <Switch>
               <Route exact path="/manage">
                 <DocumentsManage />
@@ -68,7 +69,7 @@ export function AppRoot(): JSX.Element {
                 <DocumentSettings />
               </Route>
             </Switch>
-          </BrowserRouter>
+          </Router>
         </AppContext.Provider>
       </Box>
       <AppSnackbar

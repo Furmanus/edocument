@@ -28,6 +28,7 @@ import { AppContext } from '../../../AppRoot';
 import { openSnackBarAction } from '../../../actions/appActions';
 import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHint';
 import { AppButton } from '../../../../common/components/AppButton';
+import { history } from '../../../utils/history';
 
 const styles = {
   wrapper: {
@@ -130,6 +131,8 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
           'success',
         ),
       );
+
+      history.push('/app/manage');
     } catch (e) {
       const errors = e.response?.data?.message;
       let preparedErrors;
