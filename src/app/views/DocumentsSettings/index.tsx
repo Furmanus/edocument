@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DocumentSettingsForm } from './components/DocumentSettingsForm';
 
-export default function DocumentsCreate(props: any): JSX.Element {
+export default function DocumentsCreate(): JSX.Element {
   return <DocumentSettingsForm />;
 }

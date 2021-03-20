@@ -28,7 +28,7 @@ import { AppContext } from '../../../AppRoot';
 import { openSnackBarAction } from '../../../actions/appActions';
 import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHint';
 import { AppButton } from '../../../../common/components/AppButton';
-import { history } from '../../../utils/history';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 const styles = {
   wrapper: {
@@ -80,7 +80,7 @@ const dropZoneHelperText = DocumentSettingsTexts.DropZoneHelperText.replace(
 );
 
 interface IProps {
-  mode: 'create' | 'edit';
+  mode?: 'create' | 'edit';
   classes: Record<keyof typeof styles, string>;
 }
 
@@ -90,9 +90,14 @@ interface IState {
   isAddTagModalOpen: boolean;
 }
 
-class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
+type ComponentProps = RouteComponentProps & IProps;
+
+class DocumentSettingsFormClass extends React.PureComponent<
+  ComponentProps,
+  IState
+> {
   public static contextType = AppContext;
-  public static defaultProps: Partial<IProps> = {
+  public static defaultProps: Partial<ComponentProps> = {
     mode: 'create',
   };
 
@@ -121,6 +126,7 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
     form: FormApi,
   ): Promise<void> => {
     const { dispatch } = this.context;
+    const { history } = this.props;
 
     try {
       await ApplicationApi.createDocument(value);
@@ -132,7 +138,7 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
         ),
       );
 
-      history.push('/app/manage');
+      history.push('/manage');
     } catch (e) {
       const errors = e.response?.data?.message;
       let preparedErrors;
@@ -442,5 +448,5 @@ class DocumentSettingsFormClass extends React.PureComponent<IProps, IState> {
 }
 
 export const DocumentSettingsForm = withStyles(styles as any)(
-  DocumentSettingsFormClass,
+  withRouter(DocumentSettingsFormClass),
 );
