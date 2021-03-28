@@ -5,7 +5,7 @@ import { CreateDocumentDto } from '../dto/documents.dto';
 import { AppDocument, DocumentType } from '../schemas/document.schema';
 
 type PreparedDocumentDto = Omit<CreateDocumentDto, 'documentFile'> & {
-  documentFile: string[];
+  documentFiles: string[];
 };
 
 @Injectable()
@@ -20,5 +20,16 @@ export class DocumentsService {
     const createdDocument = new this.DocumentModel(document);
 
     return createdDocument.save();
+  }
+
+  public findAll(userId: string): Promise<AppDocument[]> {
+    return this.DocumentModel.find({ owner: userId }).exec();
+  }
+
+  public findEntry(userId: string, documentId: string): Promise<AppDocument> {
+    return this.DocumentModel.findOne({
+      owner: userId,
+      _id: documentId,
+    }).exec();
   }
 }

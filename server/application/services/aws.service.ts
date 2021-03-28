@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import { v4 as generateUuid } from 'uuid';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+  PutObjectCommand,
+  S3Client,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { IFile } from '../../common/interfaces/interfaces';
+import { DownloadedFileType } from 'application/interfaces/interfaces';
 
 @Injectable()
 export class AwsService {
@@ -29,5 +34,20 @@ export class AwsService {
     } else {
       // TODO handle exceptions
     }
+  }
+
+  public async downloadFiles(files: string[]): Promise<DownloadedFileType[]> {
+    return Promise.all(files.map((fileUrl) => this.downloadFile(fileUrl)));
+  }
+
+  public async downloadFile(file: string): Promise<DownloadedFileType> {
+    const data = await this.#s3.send(
+      new GetObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: file,
+      }),
+    );
+
+    return { stream: data.Body, name: file };
   }
 }

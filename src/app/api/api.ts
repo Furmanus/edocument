@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { IDocument } from '../views/DocumentsManage/interfaces/interfaces';
 import { IDocumentSettingsFormData } from '../views/DocumentsSettings/interfaces/interfaces';
 
 function createFormDataFromObject(data: object): FormData {
@@ -40,5 +41,15 @@ export class ApplicationApi {
     formData: IDocumentSettingsFormData,
   ): Promise<void> {
     return axios.post('/data/document', createFormDataFromObject(formData));
+  }
+
+  public static getDocuments(): Promise<IDocument[]> {
+    return axios
+      .get('/data/document')
+      .then((response: AxiosResponse) => response.data);
+  }
+
+  public static getDocumentFiles(id: string): Promise<void> {
+    return axios.get(`/data/document/${id}/files`);
   }
 }

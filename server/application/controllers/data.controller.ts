@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Session,
   UseInterceptors,
@@ -20,6 +22,8 @@ import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
 import { DocumentsService } from '../services/documents.service';
 import { AwsService } from '../services/aws.service';
 import { AppDocument } from '../schemas/document.schema';
+import { CompressService } from '../services/compress.service';
+import { Archiver } from 'archiver';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -32,6 +36,7 @@ export class DataController {
     private tagsService: TagsService,
     private documentsService: DocumentsService,
     private awsService: AwsService,
+    private compressService: CompressService,
   ) {}
 
   @Post('/tags')
@@ -72,10 +77,38 @@ export class DataController {
       documentTags: body.documentTags,
       documentNetValue: body.documentNetValue,
       documentGrossValue: body.documentGrossValue,
-      documentFile: uploadedFilesKeys,
+      documentFiles: uploadedFilesKeys,
       owner: session.userId,
     });
 
     return createdDocument;
+  }
+
+  @Get('/document')
+  @HttpCode(HttpStatus.OK)
+  public getDocuments(
+    @Session() session: IApplicationSession,
+  ): Promise<AppDocument[]> {
+    return this.documentsService.findAll(session.userId);
+  }
+
+  @Get('/document/:id/files')
+  @Header('Content-Type', 'application/octet-stream')
+  @Header('Content-Disposition', 'attachment; filename=files.zip')
+  @HttpCode(HttpStatus.OK)
+  public async getDocumentFiles(
+    @Session() session: IApplicationSession,
+    @Param('id') id: string,
+  ): Promise<Archiver> {
+    const document = await this.documentsService.findEntry(session.userId, id);
+
+    if (document?.documentFiles?.length) {
+      const filesStreams = await this.awsService.downloadFiles(
+        document?.documentFiles,
+      );
+      const zipStream = await this.compressService.compressFiles(filesStreams);
+
+      return zipStream;
+    }
   }
 }

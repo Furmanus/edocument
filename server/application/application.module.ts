@@ -8,6 +8,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { DocumentsService } from './services/documents.service';
 import { AwsService } from './services/aws.service';
 import { AppDocument, DocumentSchema } from './schemas/document.schema';
+import { CompressService } from './services/compress.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { AppDocument, DocumentSchema } from './schemas/document.schema';
     MulterModule.register({ dest: '../../tempUpload' }),
   ],
   controllers: [ApplicationController, DataController],
-  providers: [TagsService, DocumentsService, AwsService],
+  providers: [TagsService, DocumentsService, AwsService, CompressService],
 })
 export class ApplicationModule {}

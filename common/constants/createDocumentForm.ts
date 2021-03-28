@@ -16,6 +16,6 @@ export const acceptedFileUploadFiles = [
   'image/png',
   'image/gif',
   'image/jpg',
-  'image/jpef',
+  'image/jpeg',
   'image/bmp',
 ];
