@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Res,
   Session,
   UseInterceptors,
 } from '@nestjs/common';
@@ -23,7 +24,7 @@ import { DocumentsService } from '../services/documents.service';
 import { AwsService } from '../services/aws.service';
 import { AppDocument } from '../schemas/document.schema';
 import { CompressService } from '../services/compress.service';
-import { Archiver } from 'archiver';
+import { Response } from 'express';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -99,7 +100,8 @@ export class DataController {
   public async getDocumentFiles(
     @Session() session: IApplicationSession,
     @Param('id') id: string,
-  ): Promise<Archiver> {
+    @Res() res: Response,
+  ): Promise<void> {
     const document = await this.documentsService.findEntry(session.userId, id);
 
     if (document?.documentFiles?.length) {
@@ -108,7 +110,7 @@ export class DataController {
       );
       const zipStream = await this.compressService.compressFiles(filesStreams);
 
-      return zipStream;
+      zipStream.pipe(res);
     }
   }
 }

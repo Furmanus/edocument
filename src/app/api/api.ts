@@ -48,8 +48,4 @@ export class ApplicationApi {
       .get('/data/document')
       .then((response: AxiosResponse) => response.data);
   }
-
-  public static getDocumentFiles(id: string): Promise<void> {
-    return axios.get(`/data/document/${id}/files`);
-  }
 }

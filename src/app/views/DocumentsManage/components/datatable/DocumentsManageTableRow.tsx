@@ -3,7 +3,6 @@ import { IDocument } from '../../interfaces/interfaces';
 import { IconButton, makeStyles, TableCell, TableRow } from '@material-ui/core';
 import { CreateDocumentFormFields } from '../../../../../../common/constants/createDocumentForm';
 import { CloudDownload } from '@material-ui/icons';
-import { ApplicationApi } from '../../../../api/api';
 
 const useStyles = makeStyles({
   centerCell: {
@@ -31,9 +30,7 @@ interface IProps {
 export function DocumentsManageTableRow(props: IProps): JSX.Element {
   const classes = useStyles();
   const { document } = props;
-  const onDownloadClick = React.useCallback(async () => {
-    ApplicationApi.getDocumentFiles(document._id);
-  }, [document]);
+  const downloadUrl = `/data/document/${document._id}/files`;
 
   return (
     <TableRow>
@@ -62,12 +59,13 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
           EMPTY_CELL_MARK}
       </TableCell>
       <TableCell className={classes.centerCell}>
-        <IconButton
-          color="primary"
-          aria-label="download"
-          onClick={onDownloadClick}
-        >
-          <CloudDownload />
+        <IconButton color="primary" aria-label="download">
+          <a
+            href={downloadUrl}
+            download={`${document[CreateDocumentFormFields.DocumentName]}.zip`}
+          >
+            <CloudDownload />
+          </a>
         </IconButton>
       </TableCell>
     </TableRow>
