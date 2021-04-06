@@ -167,6 +167,12 @@ class DocumentSettingsFormClass extends React.PureComponent<
     }
   };
 
+  private onCancelClick = (): void => {
+    const { history } = this.props;
+
+    history.push('/manage');
+  };
+
   private renderNameInput = (
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
@@ -420,7 +426,11 @@ class DocumentSettingsFormClass extends React.PureComponent<
                   justifyContent="flex-end"
                   alignItems="center"
                 >
-                  <Button color="primary" disabled={props.submitting}>
+                  <Button
+                    color="primary"
+                    onClick={this.onCancelClick}
+                    disabled={props.submitting}
+                  >
                     {DocumentSettingsTexts.Cancel}
                   </Button>
                   <AppButton

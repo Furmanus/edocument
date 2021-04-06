@@ -6,4 +6,5 @@ export const enum DocumentsManageTexts {
   DataTableNetValueColumnHeader = 'Net value',
   DataTableGrossValueColumnHeader = 'Gross value',
   DataTableFilesColumnHeader = 'Files',
+  DocumentsManageAddButtonText = 'Create document',
 }
