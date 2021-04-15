@@ -8,6 +8,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { IFile } from '../../common/interfaces/interfaces';
 import { DownloadedFileType } from 'application/interfaces/interfaces';
+import { Readable } from 'stream';
 
 @Injectable()
 export class AwsService {
@@ -49,5 +50,27 @@ export class AwsService {
     );
 
     return { stream: data.Body, name: file };
+  }
+
+  public async downloadFilesAsBase64(files: string[]): Promise<string[]> {
+    const fileStreams = (await this.downloadFiles(files)).map(
+      (file) => file.stream,
+    );
+
+    return Promise.all(fileStreams.map(this.getBase64FromStream));
+  }
+
+  private getBase64FromStream(stream: Readable): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const data: Uint8Array[] = [];
+
+      stream.once('data', (chunk) => {
+        data.push(chunk);
+      });
+      stream.once('end', () => {
+        resolve(Buffer.concat(data).toString('base64'));
+      });
+      stream.once('error', reject);
+    });
   }
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { makeStyles, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { DocumentsManageTexts as Texts } from '../../constants/documentsManageTexts';
+import { isMobile } from '../../../../utils/dom';
 
 const useStyles = makeStyles({
   headerCell: {
@@ -21,18 +22,29 @@ export function DocumentsManageTableHeader(): JSX.Element {
         <TableCell className={classes.headerCell}>
           {Texts.DataTableDateColumnHeader}
         </TableCell>
-        <TableCell className={classes.headerCell}>
-          {Texts.DataTableTagsColumnHeader}
-        </TableCell>
-        <TableCell className={classes.headerCell}>
-          {Texts.DataTableNetValueColumnHeader}
-        </TableCell>
-        <TableCell className={classes.headerCell}>
-          {Texts.DataTableGrossValueColumnHeader}
-        </TableCell>
+        {!isMobile() && (
+          <TableCell className={classes.headerCell}>
+            {Texts.DataTableTagsColumnHeader}
+          </TableCell>
+        )}
+        {!isMobile() && (
+          <TableCell className={classes.headerCell}>
+            {Texts.DataTableNetValueColumnHeader}
+          </TableCell>
+        )}
+        {!isMobile() && (
+          <TableCell className={classes.headerCell}>
+            {Texts.DataTableGrossValueColumnHeader}
+          </TableCell>
+        )}
         <TableCell className={classes.headerCell}>
           {Texts.DataTableFilesColumnHeader}
         </TableCell>
+        {isMobile() && (
+          <TableCell className={classes.headerCell}>
+            {Texts.DataTableMobileDetailsColumnHeader}
+          </TableCell>
+        )}
       </TableRow>
     </TableHead>
   );

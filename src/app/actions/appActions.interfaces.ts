@@ -1,5 +1,6 @@
 import { AppActions } from '../constants/appActions';
 import { SnackBarSeverityType } from '../../common/interfaces/interfaces';
+import { IDocument } from '../views/DocumentsManage/interfaces/interfaces';
 
 interface Action<Type extends AppActions> {
   type: Type;
@@ -12,4 +13,14 @@ interface OpenSnackBarAction extends Action<AppActions.OpenSnackBar> {
 
 type CloseSnackBarAction = Action<AppActions.CloseSnackBar>;
 
-export type AppActionTypes = OpenSnackBarAction | CloseSnackBarAction;
+interface OpenDocumentDetailsModal extends Action<AppActions.OpenDetailsModal> {
+  document: IDocument;
+}
+
+type CloseDocumentDetailsModal = Action<AppActions.CloseDetailsModal>;
+
+export type AppActionTypes =
+  | OpenSnackBarAction
+  | CloseSnackBarAction
+  | OpenDocumentDetailsModal
+  | CloseDocumentDetailsModal;

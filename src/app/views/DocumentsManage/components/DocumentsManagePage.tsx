@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Button,
-  CircularProgress,
   makeStyles,
   Paper,
   Table,
@@ -13,9 +12,12 @@ import { useDocumentsManage } from '../hooks/useDocumentsManage';
 import { DocumentsManageTableHeader } from './datatable/DocumentsManageTableHeader';
 import { DocumentsManageTexts } from '../constants/documentsManageTexts';
 import { DocumentsManageTableRow } from './datatable/DocumentsManageTableRow';
-import { AppButton } from '../../../../common/components/AppButton';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router';
+import { DocumentsManageDetailsModal } from './DocumentsManageDetailsModal';
+import { AppContext } from '../../../AppRoot';
+import { closeDocumentDetailsAction } from '../../../actions/appActions';
+import { AppLoader } from '../../../components/Loader';
 
 const useStyles = makeStyles({
   container: {
@@ -27,12 +29,13 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-  },
-  loader: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    '@media (max-width: 480px)': {
+      minWidth: 'unset',
+      height: '100%',
+      width: '100%',
+      padding: '0 5px',
+      margin: 0,
+    },
   },
   heading: {
     textAlign: 'center',
@@ -42,16 +45,25 @@ const useStyles = makeStyles({
   createButton: {
     alignSelf: 'flex-end',
     marginRight: 20,
+    '@media (max-width: 480px)': {
+      marginTop: 15,
+      marginBottom: 15,
+    },
   },
 });
 
 export function DocumentsManagePage(): JSX.Element {
   const classes = useStyles();
   const history = useHistory();
+  const { state, dispatch } = useContext(AppContext);
+  const { examinedDocument } = state;
   const [documents, isFetchingDocuments] = useDocumentsManage();
   const onCreateClick = useCallback(() => {
     history.push('/settings');
   }, [history]);
+  const onDetailsClose = useCallback(() => {
+    dispatch(closeDocumentDetailsAction());
+  }, [closeDocumentDetailsAction, dispatch]);
 
   return (
     <Paper className={classes.container} component="section" elevation={3}>
@@ -65,11 +77,13 @@ export function DocumentsManagePage(): JSX.Element {
         size="small"
         onClick={onCreateClick}
       >
-        {DocumentsManageTexts.DocumentsManageAddButtonText}
+        <Typography variant="button">
+          {DocumentsManageTexts.DocumentsManageAddButtonText}
+        </Typography>
       </Button>
       <TableContainer>
         {isFetchingDocuments || documents === null ? (
-          <CircularProgress className={classes.loader} />
+          <AppLoader />
         ) : (
           <Table>
             <DocumentsManageTableHeader />
@@ -84,6 +98,11 @@ export function DocumentsManagePage(): JSX.Element {
           </Table>
         )}
       </TableContainer>
+      <DocumentsManageDetailsModal
+        isOpen={Boolean(examinedDocument)}
+        onClose={onDetailsClose}
+        document={examinedDocument}
+      />
     </Paper>
   );
 }

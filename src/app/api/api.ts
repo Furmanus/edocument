@@ -48,4 +48,10 @@ export class ApplicationApi {
       .get('/data/document')
       .then((response: AxiosResponse) => response.data);
   }
+
+  public static getDocumentsAsBase64(id: string): Promise<string[]> {
+    return axios
+      .get(`data/document/${id}/base64`)
+      .then((response) => response.data);
+  }
 }
