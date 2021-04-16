@@ -64,10 +64,13 @@ export class AwsService {
     return new Promise((resolve, reject) => {
       const data: Uint8Array[] = [];
 
-      stream.once('data', (chunk) => {
+      function onData(chunk: Uint8Array): void {
         data.push(chunk);
-      });
+      }
+
+      stream.on('data', onData);
       stream.once('end', () => {
+        stream.off('data', onData);
         resolve(Buffer.concat(data).toString('base64'));
       });
       stream.once('error', reject);
