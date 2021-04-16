@@ -16,8 +16,12 @@ import { useCallback, useContext } from 'react';
 import { useHistory } from 'react-router';
 import { DocumentsManageDetailsModal } from './DocumentsManageDetailsModal';
 import { AppContext } from '../../../AppRoot';
-import { closeDocumentDetailsAction } from '../../../actions/appActions';
+import {
+  closeDocumentDetailsAction,
+  closeImageModalAction,
+} from '../../../actions/appActions';
 import { AppLoader } from '../../../components/Loader';
+import { DocumentManageImagePreviewModal } from './DocumentManageImagePreviewModal';
 
 const useStyles = makeStyles({
   container: {
@@ -64,6 +68,9 @@ export function DocumentsManagePage(): JSX.Element {
   const onDetailsClose = useCallback(() => {
     dispatch(closeDocumentDetailsAction());
   }, [closeDocumentDetailsAction, dispatch]);
+  const onImageModalClose = useCallback(() => {
+    dispatch(closeImageModalAction());
+  }, [closeImageModalAction, dispatch]);
 
   return (
     <Paper className={classes.container} component="section" elevation={3}>
@@ -102,6 +109,10 @@ export function DocumentsManagePage(): JSX.Element {
         isOpen={Boolean(examinedDocument)}
         onClose={onDetailsClose}
         document={examinedDocument}
+      />
+      <DocumentManageImagePreviewModal
+        src={state.viewedImageSrc}
+        onClose={onImageModalClose}
       />
     </Paper>
   );

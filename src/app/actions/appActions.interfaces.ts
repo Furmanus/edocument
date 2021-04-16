@@ -19,8 +19,16 @@ interface OpenDocumentDetailsModal extends Action<AppActions.OpenDetailsModal> {
 
 type CloseDocumentDetailsModal = Action<AppActions.CloseDetailsModal>;
 
+interface OpenImageModal extends Action<AppActions.OpenImageModal> {
+  viewedImageSrc: string;
+}
+
+type CloseImageModal = Action<AppActions.CloseImageModal>;
+
 export type AppActionTypes =
   | OpenSnackBarAction
   | CloseSnackBarAction
   | OpenDocumentDetailsModal
-  | CloseDocumentDetailsModal;
+  | CloseDocumentDetailsModal
+  | OpenImageModal
+  | CloseImageModal;

@@ -25,3 +25,11 @@ export function openDocumentDetailsAction(document: IDocument): AppActionTypes {
 export function closeDocumentDetailsAction(): AppActionTypes {
   return { type: AppActions.CloseDetailsModal };
 }
+
+export function openImageModalAction(viewedImageSrc: string): AppActionTypes {
+  return { type: AppActions.OpenImageModal, viewedImageSrc };
+}
+
+export function closeImageModalAction(): AppActionTypes {
+  return { type: AppActions.CloseImageModal };
+}

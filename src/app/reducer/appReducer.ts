@@ -2,12 +2,13 @@ import { AppActionTypes } from '../actions/appActions.interfaces';
 import { AppActions } from '../constants/appActions';
 import { SnackBarSeverityType } from '../../common/interfaces/interfaces';
 import { IDocument } from '../views/DocumentsManage/interfaces/interfaces';
-
+// TODO split reducers between two views
 export interface IApplicationState {
   isSnackBarOpen: boolean;
   snackBarText: string;
   snackBarSeverity: SnackBarSeverityType;
   examinedDocument: IDocument;
+  viewedImageSrc: string;
 }
 
 export const initialState: IApplicationState = {
@@ -15,6 +16,7 @@ export const initialState: IApplicationState = {
   snackBarText: '',
   snackBarSeverity: 'info',
   examinedDocument: null,
+  viewedImageSrc: null,
 };
 
 export function appReducer(
@@ -49,6 +51,16 @@ export function appReducer(
       return {
         ...state,
         examinedDocument: null,
+      };
+    case AppActions.OpenImageModal:
+      return {
+        ...state,
+        viewedImageSrc: action.viewedImageSrc,
+      };
+    case AppActions.CloseImageModal:
+      return {
+        ...state,
+        viewedImageSrc: null,
       };
   }
 }

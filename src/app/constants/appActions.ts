@@ -3,4 +3,6 @@ export const enum AppActions {
   CloseSnackBar = 'Action:CloseSnackBar',
   OpenDetailsModal = 'Action:OpenDetailsModal',
   CloseDetailsModal = 'Action:CloseDetailsModal',
+  OpenImageModal = 'Action:OpenImageModal',
+  CloseImageModal = 'Action:CloseImageModal',
 }
