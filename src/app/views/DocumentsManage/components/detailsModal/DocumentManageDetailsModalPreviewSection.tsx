@@ -15,8 +15,9 @@ export function DocumentsManageDetailsModalPreviewSection({
   return (
     <Box
       width="100%"
-      height={64}
+      height={72}
       position="relative"
+      padding="4px 0"
       display="flex"
       flexDirection="row"
       justifyContent="space-evenly"
