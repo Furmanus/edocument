@@ -44,11 +44,9 @@ export function DocumentsManageTableHeader(): JSX.Element {
         <TableCell className={classes.headerCell}>
           {Texts.DataTableFilesColumnHeader}
         </TableCell>
-        {isMobile && (
-          <TableCell className={classes.headerCell}>
-            {Texts.DataTableMobileDetailsColumnHeader}
-          </TableCell>
-        )}
+        <TableCell className={classes.headerCell}>
+          {Texts.DataTableMobileDetailsColumnHeader}
+        </TableCell>
       </TableRow>
     </TableHead>
   );

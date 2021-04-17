@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Box, IconButton, makeStyles, Modal, Paper } from '@material-ui/core';
+import {
+  Box,
+  IconButton,
+  makeStyles,
+  Modal,
+  Paper,
+  Zoom,
+} from '@material-ui/core';
 import { Cancel } from '@material-ui/icons';
 
 interface IProps {
@@ -57,14 +64,16 @@ export function DocumentManageImagePreviewModal({
       onClose={onClose}
       BackdropProps={backdropProps}
     >
-      <Paper className={classes.wrapper} elevation={3}>
-        <IconButton className={classes.closeButton} onClick={onClose}>
-          <Cancel />
-        </IconButton>
-        <Box className={classes.modalContent}>
-          <img className={classes.image} src={src} alt="document" />
-        </Box>
-      </Paper>
+      <Zoom in={Boolean(src)}>
+        <Paper className={classes.wrapper} elevation={3}>
+          <IconButton className={classes.closeButton} onClick={onClose}>
+            <Cancel />
+          </IconButton>
+          <Box className={classes.modalContent}>
+            <img className={classes.image} src={src} alt="document" />
+          </Box>
+        </Paper>
+      </Zoom>
     </Modal>
   );
 }

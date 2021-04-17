@@ -88,14 +88,12 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
           </a>
         </IconButton>
       </TableCell>
-      {isMobile && (
-        <TableCell>
-          <DocumentsManageTableRowActionMenu
-            document={document}
-            handleDetailsClick={handleDetailsClick}
-          />
-        </TableCell>
-      )}
+      <TableCell>
+        <DocumentsManageTableRowActionMenu
+          document={document}
+          handleDetailsClick={handleDetailsClick}
+        />
+      </TableCell>
     </TableRow>
   );
 }

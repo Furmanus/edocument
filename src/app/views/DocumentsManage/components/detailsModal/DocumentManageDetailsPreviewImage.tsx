@@ -15,6 +15,7 @@ const useStyles = makeStyles({
     objectFit: 'contain',
     boxShadow: '0 0 2px 0 rgba(0, 0, 0, 0.5)',
     transition: 'transform 0.3s ease-in-out',
+    cursor: 'pointer',
   },
 });
 
