@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { useCallback, useContext } from 'react';
 import { IDocument } from '../../interfaces/interfaces';
 import { IconButton, makeStyles, TableCell, TableRow } from '@material-ui/core';
 import { CreateDocumentFormFields } from '../../../../../../common/constants/createDocumentForm';
 import { CloudDownload } from '@material-ui/icons';
-import { isMobile } from '../../../../utils/dom';
 import { DocumentsManageTableRowActionMenu } from './DocumentsManageTableRowActionMenu';
-import { useCallback, useContext } from 'react';
 import { AppContext } from '../../../../AppRoot';
 import { openDocumentDetailsAction } from '../../../../actions/appActions';
+import { BreakpointTypes } from '../../../../constants/constants';
 
 const useStyles = makeStyles({
   centerCell: {
@@ -33,10 +33,11 @@ interface IProps {
 }
 
 export function DocumentsManageTableRow(props: IProps): JSX.Element {
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
   const classes = useStyles();
   const { document } = props;
   const downloadUrl = `/data/document/${document._id}/files`;
+  const isMobile = state.windowWidth === BreakpointTypes.Mobile;
   const handleDetailsClick = useCallback(
     (document: IDocument) => {
       dispatch(openDocumentDetailsAction(document));
@@ -55,7 +56,7 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
       <TableCell className={classes.centerCell}>
         {document[CreateDocumentFormFields.DocumentDate] || EMPTY_CELL_MARK}
       </TableCell>
-      {!isMobile() && (
+      {!isMobile && (
         <TableCell
           title={document[CreateDocumentFormFields.DocumentTags].join(',')}
           className={classes.tagsCell}
@@ -65,13 +66,13 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
             : EMPTY_CELL_MARK}
         </TableCell>
       )}
-      {!isMobile() && (
+      {!isMobile && (
         <TableCell className={classes.centerCell}>
           {document[CreateDocumentFormFields.DocumentNetValue] ||
             EMPTY_CELL_MARK}
         </TableCell>
       )}
-      {!isMobile() && (
+      {!isMobile && (
         <TableCell className={classes.centerCell}>
           {document[CreateDocumentFormFields.DocumentGrossValue] ||
             EMPTY_CELL_MARK}
@@ -87,7 +88,7 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
           </a>
         </IconButton>
       </TableCell>
-      {isMobile() && (
+      {isMobile && (
         <TableCell>
           <DocumentsManageTableRowActionMenu
             document={document}

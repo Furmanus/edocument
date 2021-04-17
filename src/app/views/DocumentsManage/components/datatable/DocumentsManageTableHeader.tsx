@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import { makeStyles, TableCell, TableHead, TableRow } from '@material-ui/core';
 import { DocumentsManageTexts as Texts } from '../../constants/documentsManageTexts';
-import { isMobile } from '../../../../utils/dom';
+import { AppContext } from '../../../../AppRoot';
+import { BreakpointTypes } from '../../../../constants/constants';
 
 const useStyles = makeStyles({
   headerCell: {
@@ -12,6 +14,8 @@ const useStyles = makeStyles({
 
 export function DocumentsManageTableHeader(): JSX.Element {
   const classes = useStyles();
+  const { state } = useContext(AppContext);
+  const isMobile = state.windowWidth === BreakpointTypes.Mobile;
 
   return (
     <TableHead>
@@ -22,17 +26,17 @@ export function DocumentsManageTableHeader(): JSX.Element {
         <TableCell className={classes.headerCell}>
           {Texts.DataTableDateColumnHeader}
         </TableCell>
-        {!isMobile() && (
+        {!isMobile && (
           <TableCell className={classes.headerCell}>
             {Texts.DataTableTagsColumnHeader}
           </TableCell>
         )}
-        {!isMobile() && (
+        {!isMobile && (
           <TableCell className={classes.headerCell}>
             {Texts.DataTableNetValueColumnHeader}
           </TableCell>
         )}
-        {!isMobile() && (
+        {!isMobile && (
           <TableCell className={classes.headerCell}>
             {Texts.DataTableGrossValueColumnHeader}
           </TableCell>
@@ -40,7 +44,7 @@ export function DocumentsManageTableHeader(): JSX.Element {
         <TableCell className={classes.headerCell}>
           {Texts.DataTableFilesColumnHeader}
         </TableCell>
-        {isMobile() && (
+        {isMobile && (
           <TableCell className={classes.headerCell}>
             {Texts.DataTableMobileDetailsColumnHeader}
           </TableCell>

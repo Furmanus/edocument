@@ -57,7 +57,7 @@ export function DocumentManageImagePreviewModal({
       onClose={onClose}
       BackdropProps={backdropProps}
     >
-      <Paper className={classes.wrapper}>
+      <Paper className={classes.wrapper} elevation={3}>
         <IconButton className={classes.closeButton} onClick={onClose}>
           <Cancel />
         </IconButton>

@@ -2,6 +2,8 @@ import { AppActionTypes } from '../actions/appActions.interfaces';
 import { AppActions } from '../constants/appActions';
 import { SnackBarSeverityType } from '../../common/interfaces/interfaces';
 import { IDocument } from '../views/DocumentsManage/interfaces/interfaces';
+import { BreakpointTypes } from '../constants/constants';
+
 // TODO split reducers between two views
 export interface IApplicationState {
   isSnackBarOpen: boolean;
@@ -9,6 +11,7 @@ export interface IApplicationState {
   snackBarSeverity: SnackBarSeverityType;
   examinedDocument: IDocument;
   viewedImageSrc: string;
+  windowWidth: BreakpointTypes;
 }
 
 export const initialState: IApplicationState = {
@@ -17,6 +20,8 @@ export const initialState: IApplicationState = {
   snackBarSeverity: 'info',
   examinedDocument: null,
   viewedImageSrc: null,
+  windowWidth:
+    window.innerWidth <= 480 ? BreakpointTypes.Mobile : BreakpointTypes.Desktop,
 };
 
 export function appReducer(
@@ -61,6 +66,11 @@ export function appReducer(
       return {
         ...state,
         viewedImageSrc: null,
+      };
+    case AppActions.ResizeWindow:
+      return {
+        ...state,
+        windowWidth: action.windowWidth,
       };
   }
 }

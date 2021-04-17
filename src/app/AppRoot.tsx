@@ -5,13 +5,13 @@ import { AppNavigation } from './components/AppNavigation';
 import { Box } from '@material-ui/core';
 import { AppLoader } from './components/Loader';
 import { AppSnackbar } from '../common/components/AppSnackbar';
-import { Dispatch, useCallback, useMemo, useReducer } from 'react';
+import { Dispatch, useCallback, useEffect, useMemo, useReducer } from 'react';
 import {
   appReducer,
   IApplicationState,
   initialState,
 } from './reducer/appReducer';
-import { closeSnackBarAction } from './actions/appActions';
+import { closeSnackBarAction, windowResizeAction } from './actions/appActions';
 import { AppActionTypes } from './actions/appActions.interfaces';
 import { history } from './utils/history';
 
@@ -46,6 +46,17 @@ export function AppRoot(): JSX.Element {
     dispatch(closeSnackBarAction());
   }, []);
   const contextValue = useMemo(() => ({ state, dispatch }), [state, dispatch]);
+  const onWindowResize = useCallback(() => {
+    dispatch(windowResizeAction());
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('resize', onWindowResize);
+
+    return () => {
+      window.removeEventListener('resize', onWindowResize);
+    };
+  }, []);
 
   return (
     <React.Fragment>

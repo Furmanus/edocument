@@ -5,4 +5,5 @@ export const enum AppActions {
   CloseDetailsModal = 'Action:CloseDetailsModal',
   OpenImageModal = 'Action:OpenImageModal',
   CloseImageModal = 'Action:CloseImageModal',
+  ResizeWindow = 'Action:ResizeWindow',
 }
