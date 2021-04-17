@@ -8,6 +8,7 @@ import { DocumentsManageTableRowActionMenu } from './DocumentsManageTableRowActi
 import { AppContext } from '../../../../AppRoot';
 import { openDocumentDetailsAction } from '../../../../actions/appActions';
 import { BreakpointTypes } from '../../../../constants/constants';
+import { formatCurrency } from '../../../../utils/currency';
 
 const useStyles = makeStyles({
   centerCell: {
@@ -44,6 +45,14 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
     },
     [document],
   );
+  const {
+    documentGrossValue,
+    documentNetValue,
+    documentName,
+    documentFile,
+    documentDate,
+    documentTags,
+  } = document;
 
   return (
     <TableRow>
@@ -51,30 +60,28 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
         title={document[CreateDocumentFormFields.DocumentName]}
         className={classes.nameCell}
       >
-        {document[CreateDocumentFormFields.DocumentName]}
+        {documentName}
       </TableCell>
       <TableCell className={classes.centerCell}>
-        {document[CreateDocumentFormFields.DocumentDate] || EMPTY_CELL_MARK}
+        {documentDate || EMPTY_CELL_MARK}
       </TableCell>
       {!isMobile && (
         <TableCell
           title={document[CreateDocumentFormFields.DocumentTags].join(',')}
           className={classes.tagsCell}
         >
-          {document[CreateDocumentFormFields.DocumentTags].length
-            ? document[CreateDocumentFormFields.DocumentTags]
-            : EMPTY_CELL_MARK}
+          {documentTags.length ? documentTags : EMPTY_CELL_MARK}
         </TableCell>
       )}
       {!isMobile && (
         <TableCell className={classes.centerCell}>
-          {document[CreateDocumentFormFields.DocumentNetValue] ||
+          {(documentNetValue && formatCurrency(documentNetValue)) ||
             EMPTY_CELL_MARK}
         </TableCell>
       )}
       {!isMobile && (
         <TableCell className={classes.centerCell}>
-          {document[CreateDocumentFormFields.DocumentGrossValue] ||
+          {(documentGrossValue && formatCurrency(documentGrossValue)) ||
             EMPTY_CELL_MARK}
         </TableCell>
       )}

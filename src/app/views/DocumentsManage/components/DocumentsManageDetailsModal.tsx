@@ -16,10 +16,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Cancel } from '@material-ui/icons';
-import { CreateDocumentFormFields } from '../../../../../common/constants/createDocumentForm';
 import { DocumentsManageTexts } from '../constants/documentsManageTexts';
 import { DocumentsManageDetailsModalPreviewSection } from './detailsModal/DocumentManageDetailsModalPreviewSection';
 import { useDocumentsDetailsPreview } from '../hooks/useDocumentsDetailsPreview';
+import { formatCurrency } from '../../../utils/currency';
 
 interface IProps {
   isOpen: boolean;
@@ -61,6 +61,14 @@ export function DocumentsManageDetailsModal({
     return null;
   }
 
+  const {
+    documentName,
+    documentDate,
+    documentGrossValue,
+    documentNetValue,
+    documentTags,
+  } = document;
+
   return (
     <Modal className={classes.modalWrapper} open={isOpen} onClose={onClose}>
       <Fade in={isOpen}>
@@ -73,8 +81,8 @@ export function DocumentsManageDetailsModal({
                   <Cancel />
                 </IconButton>
               }
-              title={document[CreateDocumentFormFields.DocumentName]}
-              subheader={document[CreateDocumentFormFields.DocumentDate]}
+              title={documentName}
+              subheader={documentDate}
             />
             <Divider />
             <CardContent>
@@ -90,9 +98,7 @@ export function DocumentsManageDetailsModal({
                     color="textSecondary"
                     noWrap={true}
                   >
-                    {document[CreateDocumentFormFields.DocumentTags].join(
-                      ', ',
-                    ) || EMPTY_VALUE}
+                    {documentTags.join(', ') || EMPTY_VALUE}
                   </Typography>
                 </GridListTile>
                 <GridListTile className={classes.labelGridCell}>
@@ -102,7 +108,7 @@ export function DocumentsManageDetailsModal({
                 </GridListTile>
                 <GridListTile>
                   <Typography variant="body2" color="textSecondary">
-                    {document[CreateDocumentFormFields.DocumentNetValue] ||
+                    {(documentNetValue && formatCurrency(documentNetValue)) ||
                       EMPTY_VALUE}
                   </Typography>
                 </GridListTile>
@@ -113,7 +119,8 @@ export function DocumentsManageDetailsModal({
                 </GridListTile>
                 <GridListTile>
                   <Typography variant="body2" color="textSecondary">
-                    {document[CreateDocumentFormFields.DocumentGrossValue] ||
+                    {(documentGrossValue &&
+                      formatCurrency(documentGrossValue)) ||
                       EMPTY_VALUE}
                   </Typography>
                 </GridListTile>
