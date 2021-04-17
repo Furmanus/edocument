@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton, makeStyles, Modal } from '@material-ui/core';
+import { Box, IconButton, makeStyles, Modal, Paper } from '@material-ui/core';
 import { Cancel } from '@material-ui/icons';
 
 interface IProps {
@@ -9,19 +9,35 @@ interface IProps {
 
 const useStyles = makeStyles({
   modal: {
-    background: 'white',
-    overflow: 'auto',
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
     outline: 'none',
     boxShadow: '0 0 3px rgba(0, 0, 0, 0.5)',
   },
   closeButton: {
-    position: 'fixed',
+    padding: 4,
+    position: 'absolute',
     right: 0,
     top: 0,
+  },
+  modalContent: {
+    width: '100%',
+    height: '100%',
+    outline: 'none',
+    overflow: 'auto',
+    display: 'grid',
+    placeItems: 'center',
+  },
+  wrapper: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    maxWidth: 640,
+    maxHeight: 480,
+    outline: 'none',
   },
 });
 const backdropProps = {
@@ -40,14 +56,15 @@ export function DocumentManageImagePreviewModal({
       open={Boolean(src)}
       onClose={onClose}
       BackdropProps={backdropProps}
-      disableBackdropClick={true}
     >
-      <React.Fragment>
+      <Paper className={classes.wrapper}>
         <IconButton className={classes.closeButton} onClick={onClose}>
           <Cancel />
         </IconButton>
-        <img className={classes.image} src={src} alt="document" />
-      </React.Fragment>
+        <Box className={classes.modalContent}>
+          <img className={classes.image} src={src} alt="document" />
+        </Box>
+      </Paper>
     </Modal>
   );
 }
