@@ -25,7 +25,6 @@ import { AwsService } from '../services/aws.service';
 import { AppDocument } from '../schemas/document.schema';
 import { CompressService } from '../services/compress.service';
 import { Response } from 'express';
-import { Readable } from 'stream';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -113,6 +112,37 @@ export class DataController {
 
       zipStream.pipe(res);
     }
+  }
+
+  @Get('/document/:id')
+  @Header('Content-Type', 'application/json')
+  @HttpCode(HttpStatus.OK)
+  public async getDocument(
+    @Session() session: IApplicationSession,
+    @Param('id') id: string,
+  ): Promise<Omit<AppDocument, 'owner'> & { filesPreviews: string[] }> {
+    const document = await this.documentsService.findEntry(session.userId, id);
+    const documentFilesPreviews = await this.awsService.downloadFilesAsBase64(
+      document.documentFiles,
+    );
+    const {
+      documentTags,
+      documentName,
+      documentFiles,
+      documentDate,
+      documentGrossValue,
+      documentNetValue,
+    } = document;
+
+    return {
+      filesPreviews: documentFilesPreviews,
+      documentName,
+      documentNetValue,
+      documentGrossValue,
+      documentDate,
+      documentFiles,
+      documentTags,
+    };
   }
 
   @Get('/document/:id/base64')

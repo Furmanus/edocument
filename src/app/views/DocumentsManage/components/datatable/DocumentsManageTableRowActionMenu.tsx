@@ -7,11 +7,13 @@ import { IDocument } from '../../interfaces/interfaces';
 
 interface IProps {
   handleDetailsClick: (document: IDocument) => void;
+  handleEditClick: (document: IDocument) => void;
   document: IDocument;
 }
 
 export function DocumentsManageTableRowActionMenu({
   handleDetailsClick,
+  handleEditClick,
   document,
 }: IProps): JSX.Element {
   const [anchorElement, setAnchorElement] = useState(null);
@@ -27,7 +29,11 @@ export function DocumentsManageTableRowActionMenu({
   const onDetailsClick = useCallback(() => {
     handleDetailsClick(document);
     handleClose();
-  }, []);
+  }, [document]);
+  const onEditClick = useCallback(() => {
+    handleEditClick(document);
+    handleClose();
+  }, [document]);
 
   return (
     <React.Fragment>
@@ -47,6 +53,9 @@ export function DocumentsManageTableRowActionMenu({
       >
         <MenuItem onClick={onDetailsClick}>
           {DocumentsManageTexts.DataTableRowActionMenuDetails}
+        </MenuItem>
+        <MenuItem onClick={onEditClick}>
+          {DocumentsManageTexts.DataTableRowActionMenuEdit}
         </MenuItem>
       </Menu>
     </React.Fragment>

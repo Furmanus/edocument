@@ -9,6 +9,7 @@ import { AppContext } from '../../../../AppRoot';
 import { openDocumentDetailsAction } from '../../../../actions/appActions';
 import { BreakpointTypes } from '../../../../constants/constants';
 import { formatCurrency } from '../../../../utils/currency';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles({
   centerCell: {
@@ -35,6 +36,7 @@ interface IProps {
 
 export function DocumentsManageTableRow(props: IProps): JSX.Element {
   const { state, dispatch } = useContext(AppContext);
+  const history = useHistory();
   const classes = useStyles();
   const { document } = props;
   const downloadUrl = `/data/document/${document._id}/files`;
@@ -45,11 +47,16 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
     },
     [document],
   );
+  const handleEditClick = useCallback(
+    (document: IDocument) => {
+      history.push(`/settings/${document._id}`);
+    },
+    [document],
+  );
   const {
     documentGrossValue,
     documentNetValue,
     documentName,
-    documentFile,
     documentDate,
     documentTags,
   } = document;
@@ -99,6 +106,7 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
         <DocumentsManageTableRowActionMenu
           document={document}
           handleDetailsClick={handleDetailsClick}
+          handleEditClick={handleEditClick}
         />
       </TableCell>
     </TableRow>

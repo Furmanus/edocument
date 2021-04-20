@@ -29,16 +29,25 @@ import { openSnackBarAction } from '../../../actions/appActions';
 import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHint';
 import { AppButton } from '../../../../common/components/AppButton';
 import { RouteComponentProps, withRouter } from 'react-router';
+import { DocumentWithPreviews } from '../../DocumentsManage/interfaces/interfaces';
 
 const styles = {
   wrapper: {
     width: '100%',
     maxWidth: '480px',
     height: '100%',
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     '@media (min-width: 480px)': {
       margin: '30px 60px',
       height: 'unset',
     },
+  },
+  loadingWrapper: {
+    opacity: 0.4,
+    pointerEvents: 'none',
   },
   form: {
     width: '100%',
@@ -69,6 +78,9 @@ const styles = {
     minHeight: 16,
     transition: 'color 0.3s ease-in-out',
   },
+  loader: {
+    position: 'absolute',
+  },
 };
 const grossValueWrapperProps = { alignItems: 'flex-end' };
 const filesAccepted = acceptedFileUploadFiles
@@ -80,14 +92,17 @@ const dropZoneHelperText = DocumentSettingsTexts.DropZoneHelperText.replace(
 );
 
 interface IProps {
-  mode?: 'create' | 'edit';
+  editedDocumentId?: string;
   classes: Record<keyof typeof styles, string>;
 }
 
 interface IState {
   tags: string[];
   isFetchingTags: boolean;
+  isFetchingEditedDocumentData: boolean;
+  editedDocumentData: DocumentWithPreviews;
   isAddTagModalOpen: boolean;
+  tagsInputValue: string[];
 }
 
 type ComponentProps = RouteComponentProps & IProps;
@@ -97,20 +112,38 @@ class DocumentSettingsFormClass extends React.PureComponent<
   IState
 > {
   public static contextType = AppContext;
-  public static defaultProps: Partial<ComponentProps> = {
-    mode: 'create',
-  };
 
   public state: IState = {
     tags: [],
     isFetchingTags: false,
+    isFetchingEditedDocumentData: false,
+    editedDocumentData: null,
     isAddTagModalOpen: false,
+    tagsInputValue: [],
   };
 
   public context: React.ContextType<typeof AppContext>;
 
-  public componentDidMount(): void {
-    this.fetchTags();
+  public async componentDidMount(): Promise<void> {
+    await Promise.all([this.fetchTags(), this.fetchEditedDocumentData()]);
+  }
+
+  private async fetchEditedDocumentData(): Promise<void> {
+    const { editedDocumentId } = this.props;
+
+    if (editedDocumentId) {
+      this.setState({ isFetchingEditedDocumentData: true });
+
+      const editedDocumentData = await ApplicationApi.getDocument(
+        editedDocumentId,
+      );
+
+      this.setState({
+        isFetchingEditedDocumentData: false,
+        editedDocumentData,
+        tagsInputValue: editedDocumentData?.documentTags?.[0].split(','),
+      });
+    }
   }
 
   private async fetchTags(): Promise<void> {
@@ -129,7 +162,10 @@ class DocumentSettingsFormClass extends React.PureComponent<
     const { history } = this.props;
 
     try {
-      await ApplicationApi.createDocument(value);
+      await ApplicationApi.createDocument({
+        ...value,
+        documentTags: this.state.tagsInputValue.join(','),
+      });
 
       dispatch(
         openSnackBarAction(
@@ -165,6 +201,10 @@ class DocumentSettingsFormClass extends React.PureComponent<
         return preparedErrors;
       }
     }
+  };
+
+  private onTagsChange = (e: unknown, newValue: string[]): void => {
+    this.setState({ tagsInputValue: newValue });
   };
 
   private onCancelClick = (): void => {
@@ -212,7 +252,7 @@ class DocumentSettingsFormClass extends React.PureComponent<
     props: FieldRenderProps<string[]>,
   ): React.ReactNode => {
     const { input: inputProps, className } = props;
-    const { isFetchingTags, tags } = this.state;
+    const { isFetchingTags, tags, tagsInputValue } = this.state;
     const isDisabled = isFetchingTags || tags.length === 0;
     let placeholder =
       tags.length > 0
@@ -222,6 +262,7 @@ class DocumentSettingsFormClass extends React.PureComponent<
     if (isFetchingTags) {
       placeholder = DocumentSettingsTexts.DocumentTagsSelectLoadingPlaceholder;
     }
+
     // TODO dorobic loader przy pobieraniu tagow
     // TODO dorobic obsluge bledow
     return (
@@ -235,8 +276,9 @@ class DocumentSettingsFormClass extends React.PureComponent<
         blurOnSelect={true}
         options={tags}
         loading={isFetchingTags}
+        value={tagsInputValue}
+        onChange={this.onTagsChange}
         disabled={isDisabled}
-        onChange={(e, value) => inputProps.onChange(value)}
         onBlur={inputProps.onBlur}
         onFocus={inputProps.onFocus}
         renderInput={(props) => (
@@ -362,21 +404,29 @@ class DocumentSettingsFormClass extends React.PureComponent<
   };
 
   public render(): JSX.Element {
-    const { classes, mode } = this.props;
-    const { isAddTagModalOpen } = this.state;
-    const headingText =
-      mode === 'create'
-        ? DocumentSettingsTexts.HeadingCreate
-        : DocumentSettingsTexts.HeadingEdit;
-    const submitButtonText =
-      mode === 'create'
-        ? DocumentSettingsTexts.SubmitButtonCreate
-        : DocumentSettingsTexts.SubmitButtonEdit;
+    const { classes, editedDocumentId } = this.props;
+    const {
+      isAddTagModalOpen,
+      isFetchingEditedDocumentData,
+      editedDocumentData,
+    } = this.state;
+    const headingText = editedDocumentId
+      ? DocumentSettingsTexts.HeadingEdit
+      : DocumentSettingsTexts.HeadingCreate;
+    const submitButtonText = editedDocumentId
+      ? DocumentSettingsTexts.SubmitButtonEdit
+      : DocumentSettingsTexts.SubmitButtonCreate;
+    const wrapperClasses = `${classes.wrapper} ${
+      isFetchingEditedDocumentData ? classes.loadingWrapper : ''
+    }`;
 
     return (
       <React.Fragment>
-        <Paper component="section" className={classes.wrapper} elevation={3}>
-          <Form onSubmit={this.onFormSubmit}>
+        <Paper component="section" className={wrapperClasses} elevation={3}>
+          {isFetchingEditedDocumentData && (
+            <CircularProgress className={classes.loader} />
+          )}
+          <Form onSubmit={this.onFormSubmit} initialValues={editedDocumentData}>
             {(props) => (
               <form onSubmit={props.handleSubmit} className={classes.form}>
                 <Typography component="h2" variant="h5">

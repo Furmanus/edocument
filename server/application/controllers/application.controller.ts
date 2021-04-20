@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Res,
   Session,
@@ -26,9 +27,10 @@ export class ApplicationController {
     return response.redirect('/login');
   }
 
-  @Get('/settings')
+  @Get('/settings/:documentId?')
   public settings(
     @Session() session: IApplicationSession,
+    @Param() documentId: string,
     @Res() response: Response,
   ): void {
     const { userName } = session;

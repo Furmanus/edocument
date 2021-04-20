@@ -9,3 +9,7 @@ export interface IDocument {
   [CreateDocumentFormFields.DocumentFile]: string[];
   _id?: string;
 }
+
+export type DocumentWithPreviews = IDocument & {
+  filesPreviews: string[];
+};

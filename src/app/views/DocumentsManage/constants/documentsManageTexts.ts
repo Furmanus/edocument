@@ -9,6 +9,7 @@ export const enum DocumentsManageTexts {
   DataTableMobileDetailsColumnHeader = 'Actions',
   DocumentsManageAddButtonText = 'Create document',
   DataTableRowActionMenuDetails = 'Details',
+  DataTableRowActionMenuEdit = 'Edit',
   // DETAILS CARD
   DocumentDetailsTagsLabel = 'Tags: ',
   DocumentDetailsNetValueLabel = 'Net value: ',

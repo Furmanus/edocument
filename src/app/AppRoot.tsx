@@ -74,7 +74,11 @@ export function AppRoot(): JSX.Element {
           <Router history={history}>
             <Switch>
               <Route exact path="/manage" component={DocumentsManage} />
-              <Route exact path="/settings" component={DocumentSettings} />
+              <Route
+                exact
+                path="/settings/:documentId?"
+                component={DocumentSettings}
+              />
             </Switch>
           </Router>
         </AppContext.Provider>
