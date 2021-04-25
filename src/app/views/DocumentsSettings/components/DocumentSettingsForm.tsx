@@ -30,6 +30,7 @@ import { TextFieldWithHint } from '../../../../common/components/TextFieldWithHi
 import { AppButton } from '../../../../common/components/AppButton';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { DocumentWithPreviews } from '../../DocumentsManage/interfaces/interfaces';
+import { getCurrencyInputAdornment } from '../../../utils/currency';
 
 const styles = {
   wrapper: {
@@ -80,6 +81,9 @@ const styles = {
   },
   loader: {
     position: 'absolute',
+  },
+  inputAdornment: {
+    marginLeft: 5,
   },
 };
 const grossValueWrapperProps = { alignItems: 'flex-end' };
@@ -331,6 +335,8 @@ class DocumentSettingsFormClass extends React.PureComponent<
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
     const { className } = props;
+    const { classes } = this.props;
+    const adornmentText = getCurrencyInputAdornment();
 
     return (
       <TextFieldWithHint
@@ -342,7 +348,11 @@ class DocumentSettingsFormClass extends React.PureComponent<
           shrink: true,
         }}
         InputProps={{
-          startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
+          endAdornment: (
+            <InputAdornment className={classes.inputAdornment} position="end">
+              {adornmentText}
+            </InputAdornment>
+          ),
         }}
         fieldProps={props}
       />
@@ -353,6 +363,8 @@ class DocumentSettingsFormClass extends React.PureComponent<
     props: FieldRenderProps<string, HTMLInputElement>,
   ): React.ReactNode => {
     const { className } = props;
+    const { classes } = this.props;
+    const adornmentText = getCurrencyInputAdornment();
 
     return (
       <TextFieldWithHint
@@ -365,7 +377,11 @@ class DocumentSettingsFormClass extends React.PureComponent<
           shrink: true,
         }}
         InputProps={{
-          startAdornment: <InputAdornment position="start">PLN</InputAdornment>,
+          endAdornment: (
+            <InputAdornment className={classes.inputAdornment} position="end">
+              {adornmentText}
+            </InputAdornment>
+          ),
         }}
         fieldProps={props}
       />
