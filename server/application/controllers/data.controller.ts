@@ -17,7 +17,7 @@ import { IApplicationSession, IFile } from '../../common/interfaces/interfaces';
 import { TagsService } from '../services/tags.service';
 import { CreateTagValidationPipe } from '../pipes/createTag.pipe';
 import { UserRequestInterceptor } from '../interceptors/userRequest.interceptor';
-import { CreateDocumentDto, EditDocumentDto } from '../dto/documents.dto';
+import { CreateDocumentDto } from '../dto/documents.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentValidationPipe } from '../pipes/createDocument.pipe';
 import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
@@ -26,11 +26,12 @@ import { AwsService } from '../services/aws.service';
 import { AppDocument } from '../schemas/document.schema';
 import { CompressService } from '../services/compress.service';
 import { Response } from 'express';
+import { EditDocumentValidationPipe } from '../pipes/editDocument.pipe';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
 };
-export type EditDocumentBody = Omit<EditDocumentDto, 'documentFile'> & {
+export type EditDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
 };
 
@@ -73,26 +74,22 @@ export class DataController {
   @UseInterceptors(AnyFilesInterceptor())
   public async editDocument(
     @Param('documentId') documentId: string,
-    @BodyWithFiles() body: EditDocumentBody,
+    @BodyWithFiles(EditDocumentValidationPipe) body: EditDocumentBody,
     @Session() session: IApplicationSession,
   ): Promise<AppDocument> {
-    let { hasNewFilesBeenAdded } = body;
     const currentDocument = await this.documentsService.findEntry(
       session.userId,
       documentId,
     );
+    const { files } = body;
     const { owner, documentFiles } = currentDocument;
-
+    const hasNewFilesBeenAdded = files.length;
     let uploadedFilesKeys: string[];
-    hasNewFilesBeenAdded =
-      typeof hasNewFilesBeenAdded === 'string'
-        ? hasNewFilesBeenAdded === 'true'
-        : hasNewFilesBeenAdded;
 
     if (hasNewFilesBeenAdded) {
       await this.awsService.removeFiles(currentDocument.documentFiles);
 
-      uploadedFilesKeys = await this.awsService.uploadFiles(body.files);
+      uploadedFilesKeys = await this.awsService.uploadFiles(files);
     }
 
     const updatedDocument = await this.documentsService.update(

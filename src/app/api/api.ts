@@ -48,7 +48,7 @@ export class ApplicationApi {
 
   public static editDocument(
     documentId: string,
-    formData: IDocumentSettingsFormData & { hasNewFilesBeenAdded: boolean },
+    formData: IDocumentSettingsFormData,
   ): Promise<void> {
     return axios.put(
       `/data/document/${documentId}`,

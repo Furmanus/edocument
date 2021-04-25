@@ -4,22 +4,22 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
-import { CreateDocumentBody } from '../controllers/data.controller';
+import { EditDocumentBody } from '../controllers/data.controller';
 import { IApiError } from '../../common/interfaces/interfaces';
 import { TagsService } from '../services/tags.service';
 import {
-  validateDocumentFilesCreate,
+  validateDocumentFilesEdit,
   validateDocumentName,
   validateDocumentTags,
   validateDocumentValues,
 } from '../utils/validation';
 
 @Injectable()
-export class CreateDocumentValidationPipe implements PipeTransform {
+export class EditDocumentValidationPipe implements PipeTransform {
   public constructor(private tagsService: TagsService) {}
 
   public async transform(
-    value: CreateDocumentBody & { userId: string },
+    value: EditDocumentBody & { userId: string },
     metadata: ArgumentMetadata,
   ): Promise<typeof value> {
     const errors: IApiError[] = [];
@@ -38,7 +38,7 @@ export class CreateDocumentValidationPipe implements PipeTransform {
     validateDocumentName(errors, documentName);
     validateDocumentTags(errors, documentTags, userTags);
     validateDocumentValues(errors, documentNetValue, documentGrossValue);
-    validateDocumentFilesCreate(errors, files);
+    validateDocumentFilesEdit(errors, files);
 
     if (errors.length) {
       throw new BadRequestException(errors);

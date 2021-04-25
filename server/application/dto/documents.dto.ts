@@ -6,7 +6,3 @@ export class CreateDocumentDto {
   public documentNetValue: number;
   public documentTags: string;
 }
-
-export class EditDocumentDto extends CreateDocumentDto {
-  hasNewFilesBeenAdded: boolean;
-}

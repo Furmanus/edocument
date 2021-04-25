@@ -107,7 +107,6 @@ interface IState {
   editedDocumentData: DocumentWithPreviews;
   isAddTagModalOpen: boolean;
   tagsInputValue: string[];
-  hasNewFilesBeenAdded: boolean;
 }
 
 type ComponentProps = RouteComponentProps & IProps;
@@ -125,7 +124,6 @@ class DocumentSettingsFormClass extends React.PureComponent<
     editedDocumentData: null,
     isAddTagModalOpen: false,
     tagsInputValue: [],
-    hasNewFilesBeenAdded: false,
   };
 
   public context: React.ContextType<typeof AppContext>;
@@ -166,14 +164,12 @@ class DocumentSettingsFormClass extends React.PureComponent<
   ): Promise<void> => {
     const { dispatch } = this.context;
     const { history, editedDocumentId } = this.props;
-    const { hasNewFilesBeenAdded } = this.state;
 
     try {
       if (editedDocumentId) {
         const data = {
           ...value,
           documentTags: this.state.tagsInputValue.join(','),
-          hasNewFilesBeenAdded,
         };
 
         delete data.filesPreviews;
@@ -419,7 +415,6 @@ class DocumentSettingsFormClass extends React.PureComponent<
           previewGridProps={fileUploadImagePreviewProps}
           useChipsForPreview={true}
           showAlerts={false}
-          inputProps={{ onChange: this.onDropZoneChange }}
           maxFileSize={1024 * 1024}
           {...inputProps}
         />
@@ -431,10 +426,6 @@ class DocumentSettingsFormClass extends React.PureComponent<
         </Typography>
       </Box>
     );
-  };
-
-  private onDropZoneChange = (): void => {
-    this.setState({ hasNewFilesBeenAdded: true });
   };
 
   private onAddTagClick = (): void => {
