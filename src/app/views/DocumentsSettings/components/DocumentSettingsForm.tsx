@@ -145,7 +145,7 @@ class DocumentSettingsFormClass extends React.PureComponent<
       this.setState({
         isFetchingEditedDocumentData: false,
         editedDocumentData,
-        tagsInputValue: editedDocumentData?.documentTags?.[0]?.split(',') || [],
+        tagsInputValue: editedDocumentData?.documentTags?.split(',') || [],
       });
     }
   }
