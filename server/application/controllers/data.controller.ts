@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Res,
   Session,
   UseInterceptors,
@@ -16,7 +17,7 @@ import { IApplicationSession, IFile } from '../../common/interfaces/interfaces';
 import { TagsService } from '../services/tags.service';
 import { CreateTagValidationPipe } from '../pipes/createTag.pipe';
 import { UserRequestInterceptor } from '../interceptors/userRequest.interceptor';
-import { CreateDocumentDto } from '../dto/documents.dto';
+import { CreateDocumentDto, EditDocumentDto } from '../dto/documents.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentValidationPipe } from '../pipes/createDocument.pipe';
 import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
@@ -27,6 +28,9 @@ import { CompressService } from '../services/compress.service';
 import { Response } from 'express';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
+  files: IFile[];
+};
+export type EditDocumentBody = Omit<EditDocumentDto, 'documentFile'> & {
   files: IFile[];
 };
 
@@ -62,6 +66,50 @@ export class DataController {
     return this.tagsService
       .findAll(session.userId)
       .then((tags) => tags.map((tag) => tag.tagName));
+  }
+
+  @Put('/document/:documentId')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @UseInterceptors(AnyFilesInterceptor())
+  public async editDocument(
+    @Param('documentId') documentId: string,
+    @BodyWithFiles() body: EditDocumentBody,
+    @Session() session: IApplicationSession,
+  ): Promise<AppDocument> {
+    let { hasNewFilesBeenAdded } = body;
+    const currentDocument = await this.documentsService.findEntry(
+      session.userId,
+      documentId,
+    );
+    const { owner, documentFiles } = currentDocument;
+
+    let uploadedFilesKeys: string[];
+    hasNewFilesBeenAdded =
+      typeof hasNewFilesBeenAdded === 'string'
+        ? hasNewFilesBeenAdded === 'true'
+        : hasNewFilesBeenAdded;
+
+    if (hasNewFilesBeenAdded) {
+      await this.awsService.removeFiles(currentDocument.documentFiles);
+
+      uploadedFilesKeys = await this.awsService.uploadFiles(body.files);
+    }
+
+    const updatedDocument = await this.documentsService.update(
+      session.userId,
+      documentId,
+      {
+        documentName: body.documentName,
+        documentDate: body.documentDate,
+        documentTags: body.documentTags,
+        documentNetValue: body.documentNetValue,
+        documentGrossValue: body.documentGrossValue,
+        documentFiles: hasNewFilesBeenAdded ? uploadedFilesKeys : documentFiles,
+        owner,
+      },
+    );
+
+    return updatedDocument;
   }
 
   @Post('/document')

@@ -17,8 +17,10 @@ export const enum DocumentSettingsTexts {
   DocumentGrossValueInputLabel = 'Gross value',
   AddTagButton = 'Add tag',
   DropZoneText = 'Drag and drop file or click',
+  DropZoneEditText = 'Add new files to overwrite',
   DropZoneHelperText = 'Allowed files: {{files}}',
   DocumentCreatedSnackbarText = 'Document successfully created',
+  DocumentEditedSnackbarText = 'Document edited created',
   // ADD TAG MODAL
   AddTagHeading = 'Add tag',
   AddTagTagNameInputLabel = 'Tag name',

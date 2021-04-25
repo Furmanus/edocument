@@ -74,10 +74,10 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
       </TableCell>
       {!isMobile && (
         <TableCell
-          title={document[CreateDocumentFormFields.DocumentTags].join(',')}
+          title={document[CreateDocumentFormFields.DocumentTags]}
           className={classes.tagsCell}
         >
-          {documentTags.length ? documentTags : EMPTY_CELL_MARK}
+          {documentTags || EMPTY_CELL_MARK}
         </TableCell>
       )}
       {!isMobile && (

@@ -8,18 +8,29 @@ type PreparedDocumentDto = Omit<CreateDocumentDto, 'documentFile'> & {
   documentFiles: string[];
 };
 
+type AddDocumentDataType = PreparedDocumentDto & { owner: string };
+
 @Injectable()
 export class DocumentsService {
   public constructor(
     @InjectModel(AppDocument.name) private DocumentModel: Model<DocumentType>,
   ) {}
 
-  public create(
-    document: PreparedDocumentDto & { owner: string },
-  ): Promise<AppDocument> {
+  public create(document: AddDocumentDataType): Promise<AppDocument> {
     const createdDocument = new this.DocumentModel(document);
 
     return createdDocument.save();
+  }
+
+  public update(
+    userId: string,
+    documentId: string,
+    newDocumentData: AddDocumentDataType,
+  ): Promise<AppDocument> {
+    return this.DocumentModel.updateOne(
+      { owner: userId, _id: documentId },
+      newDocumentData,
+    ).exec();
   }
 
   public findAll(userId: string): Promise<AppDocument[]> {

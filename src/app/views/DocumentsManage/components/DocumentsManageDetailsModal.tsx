@@ -98,7 +98,7 @@ export function DocumentsManageDetailsModal({
                     color="textSecondary"
                     noWrap={true}
                   >
-                    {documentTags.join(', ') || EMPTY_VALUE}
+                    {documentTags || EMPTY_VALUE}
                   </Typography>
                 </GridListTile>
                 <GridListTile className={classes.labelGridCell}>

@@ -5,6 +5,8 @@ import {
   PutObjectCommand,
   S3Client,
   GetObjectCommand,
+  DeleteObjectCommand,
+  DeleteBucketCommandOutput,
 } from '@aws-sdk/client-s3';
 import { IFile } from '../../common/interfaces/interfaces';
 import { DownloadedFileType } from 'application/interfaces/interfaces';
@@ -75,5 +77,24 @@ export class AwsService {
       });
       stream.once('error', reject);
     });
+  }
+
+  private async removeFile(name: string): Promise<DeleteBucketCommandOutput> {
+    const data = await this.#s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: name,
+      }),
+    );
+
+    return data;
+  }
+
+  public removeFiles(names: string[]): Promise<DeleteBucketCommandOutput[]> {
+    return Promise.all(
+      names.map((file) => {
+        return this.removeFile(file);
+      }),
+    );
   }
 }

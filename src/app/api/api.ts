@@ -46,6 +46,16 @@ export class ApplicationApi {
     return axios.post('/data/document', createFormDataFromObject(formData));
   }
 
+  public static editDocument(
+    documentId: string,
+    formData: IDocumentSettingsFormData & { hasNewFilesBeenAdded: boolean },
+  ): Promise<void> {
+    return axios.put(
+      `/data/document/${documentId}`,
+      createFormDataFromObject(formData),
+    );
+  }
+
   public static getDocuments(): Promise<IDocument[]> {
     return axios
       .get('/data/document')

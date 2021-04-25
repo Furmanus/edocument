@@ -16,7 +16,7 @@ export class AppDocument {
   documentDate: string;
 
   @Prop()
-  documentTags: string[];
+  documentTags: string;
 
   @Prop()
   documentNetValue: number;

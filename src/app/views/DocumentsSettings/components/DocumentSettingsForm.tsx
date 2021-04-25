@@ -103,6 +103,7 @@ interface IState {
   editedDocumentData: DocumentWithPreviews;
   isAddTagModalOpen: boolean;
   tagsInputValue: string[];
+  hasNewFilesBeenAdded: boolean;
 }
 
 type ComponentProps = RouteComponentProps & IProps;
@@ -120,6 +121,7 @@ class DocumentSettingsFormClass extends React.PureComponent<
     editedDocumentData: null,
     isAddTagModalOpen: false,
     tagsInputValue: [],
+    hasNewFilesBeenAdded: false,
   };
 
   public context: React.ContextType<typeof AppContext>;
@@ -141,7 +143,7 @@ class DocumentSettingsFormClass extends React.PureComponent<
       this.setState({
         isFetchingEditedDocumentData: false,
         editedDocumentData,
-        tagsInputValue: editedDocumentData?.documentTags?.[0].split(','),
+        tagsInputValue: editedDocumentData?.documentTags?.[0]?.split(',') || [],
       });
     }
   }
@@ -155,24 +157,44 @@ class DocumentSettingsFormClass extends React.PureComponent<
   }
 
   private onFormSubmit = async (
-    value: IDocumentSettingsFormData,
+    value: IDocumentSettingsFormData & { filesPreviews: string[] },
     form: FormApi,
   ): Promise<void> => {
     const { dispatch } = this.context;
-    const { history } = this.props;
+    const { history, editedDocumentId } = this.props;
+    const { hasNewFilesBeenAdded } = this.state;
 
     try {
-      await ApplicationApi.createDocument({
-        ...value,
-        documentTags: this.state.tagsInputValue.join(','),
-      });
+      if (editedDocumentId) {
+        const data = {
+          ...value,
+          documentTags: this.state.tagsInputValue.join(','),
+          hasNewFilesBeenAdded,
+        };
 
-      dispatch(
-        openSnackBarAction(
-          DocumentSettingsTexts.DocumentCreatedSnackbarText,
-          'success',
-        ),
-      );
+        delete data.filesPreviews;
+
+        await ApplicationApi.editDocument(editedDocumentId, data);
+
+        dispatch(
+          openSnackBarAction(
+            DocumentSettingsTexts.DocumentEditedSnackbarText,
+            'success',
+          ),
+        );
+      } else {
+        await ApplicationApi.createDocument({
+          ...value,
+          documentTags: this.state.tagsInputValue.join(','),
+        });
+
+        dispatch(
+          openSnackBarAction(
+            DocumentSettingsTexts.DocumentCreatedSnackbarText,
+            'success',
+          ),
+        );
+      }
 
       history.push('/manage');
     } catch (e) {
@@ -355,7 +377,11 @@ class DocumentSettingsFormClass extends React.PureComponent<
   ): React.ReactNode => {
     const { input: inputProps, meta } = props;
     const { classes } = this.props;
+    const { editedDocumentData } = this.state;
     const { error, submitError, touched, modifiedSinceLastSubmit } = meta;
+    const dropZoneDescription = editedDocumentData
+      ? DocumentSettingsTexts.DropZoneEditText
+      : DocumentSettingsTexts.DropZoneText;
     const errorToDisplay =
       touched && !modifiedSinceLastSubmit && (error || submitError);
     // TODO use something better or write own file upload component
@@ -372,10 +398,12 @@ class DocumentSettingsFormClass extends React.PureComponent<
           classes={{
             root: `${classes.fileUpload} ${errorToDisplay ? 'error' : ''}`,
           }}
-          dropzoneText={DocumentSettingsTexts.DropZoneText}
+          dropzoneText={dropZoneDescription}
           filesLimit={4}
           previewGridProps={fileUploadImagePreviewProps}
+          useChipsForPreview={true}
           showAlerts={false}
+          inputProps={{ onChange: this.onDropZoneChange }}
           maxFileSize={1024 * 1024}
           {...inputProps}
         />
@@ -387,6 +415,10 @@ class DocumentSettingsFormClass extends React.PureComponent<
         </Typography>
       </Box>
     );
+  };
+
+  private onDropZoneChange = (): void => {
+    this.setState({ hasNewFilesBeenAdded: true });
   };
 
   private onAddTagClick = (): void => {

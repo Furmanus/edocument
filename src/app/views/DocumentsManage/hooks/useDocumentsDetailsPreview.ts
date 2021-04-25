@@ -30,5 +30,5 @@ export function useDocumentsDetailsPreview(
     }
   }, [documentId]);
 
-  return [previewState.filesImages, previewState.isLoading];
+  return [previewState.filesImages || [], previewState.isLoading];
 }
