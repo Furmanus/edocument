@@ -10,8 +10,16 @@ export const enum DocumentsManageTexts {
   DocumentsManageAddButtonText = 'Create document',
   DataTableRowActionMenuDetails = 'Details',
   DataTableRowActionMenuEdit = 'Edit',
+  DataTableRowActionMenuDelete = 'Delete',
   // DETAILS CARD
   DocumentDetailsTagsLabel = 'Tags: ',
   DocumentDetailsNetValueLabel = 'Net value: ',
   DocumentDetailsGrossValueLabel = 'Gross value: ',
+  // DELETE CONFIRM MODAL
+  DocumentDeleteModalHeading = 'Confirm',
+  DocumentDeleteModalContent = "Are you sure you want to delete selected entry? This can't be undone.",
+  DocumentDeleteModalReject = 'No, keep it',
+  DocumentDeleteModalConfirm = 'Yes, delete it',
+  DocumentDeleteSuccessSnackbarText = 'Document deleted successfully',
+  DocumentDeleteFailureSnackbarText = 'Failed to delete document: error',
 }

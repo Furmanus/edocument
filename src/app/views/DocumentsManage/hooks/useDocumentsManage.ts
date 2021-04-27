@@ -7,13 +7,12 @@ interface IHookState {
   isFetching: boolean;
 }
 
-export function useDocumentsManage(): [IDocument[], boolean] {
+export function useDocumentsManage(): [IDocument[], boolean, () => void] {
   const [state, setState] = useState<IHookState>({
     documents: null,
     isFetching: false,
   });
-
-  useEffect(() => {
+  const fetchDocuments = (): void => {
     setState({
       isFetching: true,
       documents: null,
@@ -25,7 +24,9 @@ export function useDocumentsManage(): [IDocument[], boolean] {
         documents,
       });
     });
-  }, []);
+  };
 
-  return [state.documents, state.isFetching];
+  useEffect(fetchDocuments, []);
+
+  return [state.documents, state.isFetching, fetchDocuments];
 }

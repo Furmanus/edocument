@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   HttpCode,
@@ -128,6 +129,23 @@ export class DataController {
     });
 
     return createdDocument;
+  }
+
+  @Delete('/document/:documentId')
+  @HttpCode(HttpStatus.OK)
+  public async deleteDocument(
+    @Session() session: IApplicationSession,
+    @Param('documentId') documentId: string,
+  ): Promise<void> {
+    const { userId } = session;
+    const deletedDocument = await this.documentsService.findEntry(
+      userId,
+      documentId,
+    );
+    const { documentFiles } = deletedDocument;
+
+    await this.documentsService.delete(userId, documentId);
+    await this.awsService.removeFiles(documentFiles);
   }
 
   @Get('/document')

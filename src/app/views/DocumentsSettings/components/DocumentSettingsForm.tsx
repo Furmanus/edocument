@@ -516,14 +516,14 @@ class DocumentSettingsFormClass extends React.PureComponent<
                   alignItems="center"
                 >
                   <Button
-                    color="primary"
+                    color="secondary"
                     onClick={this.onCancelClick}
                     disabled={props.submitting}
                   >
                     {DocumentSettingsTexts.Cancel}
                   </Button>
                   <AppButton
-                    variant="contained"
+                    variant="outlined"
                     color="primary"
                     type="submit"
                     size="medium"

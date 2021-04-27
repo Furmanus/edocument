@@ -33,6 +33,13 @@ export class DocumentsService {
     ).exec();
   }
 
+  public delete(ownerId: string, documentId: string): Promise<void> {
+    return this.DocumentModel.deleteOne({
+      owner: ownerId,
+      _id: documentId,
+    }).exec();
+  }
+
   public findAll(userId: string): Promise<AppDocument[]> {
     return this.DocumentModel.find({ owner: userId }).exec();
   }

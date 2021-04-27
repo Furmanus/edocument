@@ -56,6 +56,10 @@ export class ApplicationApi {
     );
   }
 
+  public static deleteDocument(documentId: string): Promise<void> {
+    return axios.delete(`/data/document/${documentId}`);
+  }
+
   public static getDocuments(): Promise<IDocument[]> {
     return axios
       .get('/data/document')

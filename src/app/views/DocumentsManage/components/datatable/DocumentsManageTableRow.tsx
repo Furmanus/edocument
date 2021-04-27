@@ -32,13 +32,14 @@ const EMPTY_CELL_MARK = '-';
 
 interface IProps {
   document: IDocument;
+  handleDeleteClick: (documentId: string) => void;
 }
 
 export function DocumentsManageTableRow(props: IProps): JSX.Element {
   const { state, dispatch } = useContext(AppContext);
   const history = useHistory();
   const classes = useStyles();
-  const { document } = props;
+  const { document, handleDeleteClick } = props;
   const downloadUrl = `/data/document/${document._id}/files`;
   const isMobile = state.windowWidth === BreakpointTypes.Mobile;
   const handleDetailsClick = useCallback(
@@ -107,6 +108,7 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
           document={document}
           handleDetailsClick={handleDetailsClick}
           handleEditClick={handleEditClick}
+          handleDeleteClick={handleDeleteClick}
         />
       </TableCell>
     </TableRow>

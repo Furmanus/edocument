@@ -27,7 +27,7 @@ function getLoaderSize(buttonSize: 'small' | 'medium' | 'large'): number {
     case 'small':
       return 20;
     case 'medium':
-      return 30;
+      return 25;
     case 'large':
       return 40;
   }

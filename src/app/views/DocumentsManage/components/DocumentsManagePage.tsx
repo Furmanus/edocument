@@ -12,16 +12,19 @@ import { useDocumentsManage } from '../hooks/useDocumentsManage';
 import { DocumentsManageTableHeader } from './datatable/DocumentsManageTableHeader';
 import { DocumentsManageTexts } from '../constants/documentsManageTexts';
 import { DocumentsManageTableRow } from './datatable/DocumentsManageTableRow';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useHistory } from 'react-router';
 import { DocumentsManageDetailsModal } from './DocumentsManageDetailsModal';
 import { AppContext } from '../../../AppRoot';
 import {
   closeDocumentDetailsAction,
   closeImageModalAction,
+  openSnackBarAction,
 } from '../../../actions/appActions';
 import { AppLoader } from '../../../components/Loader';
 import { DocumentManageImagePreviewModal } from './DocumentManageImagePreviewModal';
+import { DocumentsManageDeleteConfirmModal } from './DocumentsManageDeleteConfirmModal';
+import { ApplicationApi } from '../../../api/api';
 
 const useStyles = makeStyles({
   container: {
@@ -61,7 +64,9 @@ export function DocumentsManagePage(): JSX.Element {
   const history = useHistory();
   const { state, dispatch } = useContext(AppContext);
   const { examinedDocument } = state;
-  const [documents, isFetchingDocuments] = useDocumentsManage();
+  const [documents, isFetchingDocuments, fetchDocuments] = useDocumentsManage();
+  const [deletingDocumentId, setDeletingDocumentId] = useState<string>(null);
+  const [isDeletingDocument, setIsDeletingDocument] = useState<boolean>(false);
   const onCreateClick = useCallback(() => {
     history.push('/settings');
   }, [history]);
@@ -71,6 +76,42 @@ export function DocumentsManagePage(): JSX.Element {
   const onImageModalClose = useCallback(() => {
     dispatch(closeImageModalAction());
   }, [closeImageModalAction, dispatch]);
+  const handleDeleteClick = useCallback(
+    (documentId: string) => {
+      setDeletingDocumentId(documentId);
+    },
+    [document],
+  );
+  const handleConfirmDeleteClick = useCallback(() => {
+    setIsDeletingDocument(true);
+
+    ApplicationApi.deleteDocument(deletingDocumentId)
+      .then(() => {
+        setDeletingDocumentId(null);
+        dispatch(
+          openSnackBarAction(
+            DocumentsManageTexts.DocumentDeleteSuccessSnackbarText,
+            'success',
+          ),
+        );
+        fetchDocuments();
+      })
+      .catch(() => {
+        setDeletingDocumentId(null);
+        dispatch(
+          openSnackBarAction(
+            DocumentsManageTexts.DocumentDeleteFailureSnackbarText,
+            'error',
+          ),
+        );
+      })
+      .finally(() => {
+        setIsDeletingDocument(false);
+      });
+  }, [deletingDocumentId]);
+  const handleRejectDeleteClick = useCallback(() => {
+    setDeletingDocumentId(null);
+  }, []);
 
   return (
     <Paper className={classes.container} component="section" elevation={3}>
@@ -79,7 +120,7 @@ export function DocumentsManagePage(): JSX.Element {
       </Typography>
       <Button
         className={classes.createButton}
-        variant="contained"
+        variant="outlined"
         color="primary"
         size="small"
         onClick={onCreateClick}
@@ -99,6 +140,7 @@ export function DocumentsManagePage(): JSX.Element {
                 <DocumentsManageTableRow
                   key={document._id}
                   document={document}
+                  handleDeleteClick={handleDeleteClick}
                 />
               ))}
             </TableBody>
@@ -113,6 +155,12 @@ export function DocumentsManagePage(): JSX.Element {
       <DocumentManageImagePreviewModal
         src={state.viewedImageSrc}
         onClose={onImageModalClose}
+      />
+      <DocumentsManageDeleteConfirmModal
+        isOpen={!!deletingDocumentId}
+        handleConfirmClick={handleConfirmDeleteClick}
+        handleRejectClick={handleRejectDeleteClick}
+        isDeleting={isDeletingDocument}
       />
     </Paper>
   );
