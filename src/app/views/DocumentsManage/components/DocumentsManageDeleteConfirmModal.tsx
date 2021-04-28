@@ -31,6 +31,10 @@ const useStyles = makeStyles({
     alignItems: 'center',
     padding: '30px 60px',
     outline: 'none',
+    '@media (max-width: 480px)': {
+      padding: '20px 40px',
+      margin: '0 15px',
+    },
   },
   typography: {
     marginBottom: 15,

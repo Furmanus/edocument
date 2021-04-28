@@ -23,7 +23,7 @@ function createFormDataFromObject(data: object): FormData {
 
 export class ApplicationApi {
   public static logout(): Promise<void> {
-    return axios.post('/app/logout');
+    return axios.post('/logout');
   }
 
   public static createTag(tagName: string): Promise<string> {
