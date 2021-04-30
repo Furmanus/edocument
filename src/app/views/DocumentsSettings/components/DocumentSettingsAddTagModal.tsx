@@ -172,8 +172,8 @@ export function DocumentSettingsAddTagModal(props: IProps) {
               alignItems="center"
             >
               <Button
-                color="primary"
-                size="small"
+                color="secondary"
+                size="medium"
                 className={classes.cancelButton}
                 onClick={onClose}
                 disabled={formProps.submitting}
@@ -181,10 +181,10 @@ export function DocumentSettingsAddTagModal(props: IProps) {
                 {DocumentSettingsTexts.AddTagCancelButton}
               </Button>
               <AppButton
-                variant="contained"
+                variant="outlined"
                 color="primary"
                 type="submit"
-                size="small"
+                size="medium"
                 disabled={formProps.submitting}
                 isLoading={formProps.submitting}
               >
