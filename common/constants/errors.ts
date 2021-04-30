@@ -17,4 +17,6 @@ export const enum ErrorCodes {
   TooManyFilesUploaded = 2006,
   FilesInvalidType = 2007,
   NoFilesUploaded = 2008,
+  // DOCUMENT DELETION
+  DocumentDoesntExists = 3000,
 }

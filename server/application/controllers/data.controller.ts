@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -28,6 +29,7 @@ import { AppDocument } from '../schemas/document.schema';
 import { CompressService } from '../services/compress.service';
 import { Response } from 'express';
 import { EditDocumentValidationPipe } from '../pipes/editDocument.pipe';
+import { ErrorCodes } from '../../../common/constants/errors';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -142,6 +144,14 @@ export class DataController {
       userId,
       documentId,
     );
+
+    if (!deletedDocument) {
+      throw new BadRequestException({
+        errorCode: ErrorCodes.DocumentDoesntExists,
+        message: "Document doesn't exist",
+      });
+    }
+
     const { documentFiles } = deletedDocument;
 
     await this.documentsService.delete(userId, documentId);
