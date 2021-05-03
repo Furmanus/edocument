@@ -6,3 +6,8 @@ export class CreateDocumentDto {
   public documentNetValue: number;
   public documentTags: string;
 }
+
+export class GetDocumentWithPaginationDto {
+  currentPage: number;
+  rowsPerPage: number;
+}

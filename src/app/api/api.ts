@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import {
   DocumentWithPreviews,
-  IDocument,
+  IDocumentWithPagination,
 } from '../views/DocumentsManage/interfaces/interfaces';
 import { IDocumentSettingsFormData } from '../views/DocumentsSettings/interfaces/interfaces';
 
@@ -60,9 +60,12 @@ export class ApplicationApi {
     return axios.delete(`/data/document/${documentId}`);
   }
 
-  public static getDocuments(): Promise<IDocument[]> {
+  public static getDocuments(
+    currentPage: number,
+    rowsPerPage: number,
+  ): Promise<IDocumentWithPagination> {
     return axios
-      .get('/data/document')
+      .get('/data/document', { params: { currentPage, rowsPerPage } })
       .then((response: AxiosResponse) => response.data);
   }
 

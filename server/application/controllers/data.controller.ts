@@ -10,6 +10,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
   Session,
   UseInterceptors,
@@ -19,7 +20,10 @@ import { IApplicationSession, IFile } from '../../common/interfaces/interfaces';
 import { TagsService } from '../services/tags.service';
 import { CreateTagValidationPipe } from '../pipes/createTag.pipe';
 import { UserRequestInterceptor } from '../interceptors/userRequest.interceptor';
-import { CreateDocumentDto } from '../dto/documents.dto';
+import {
+  CreateDocumentDto,
+  GetDocumentWithPaginationDto,
+} from '../dto/documents.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateDocumentValidationPipe } from '../pipes/createDocument.pipe';
 import { BodyWithFiles } from '../decorators/bodyWithFiles.decorator';
@@ -30,6 +34,7 @@ import { CompressService } from '../services/compress.service';
 import { Response } from 'express';
 import { EditDocumentValidationPipe } from '../pipes/editDocument.pipe';
 import { ErrorCodes } from '../../../common/constants/errors';
+import { DocumentsWithPagination } from '../interfaces/interfaces';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -162,8 +167,15 @@ export class DataController {
   @HttpCode(HttpStatus.OK)
   public getDocuments(
     @Session() session: IApplicationSession,
-  ): Promise<AppDocument[]> {
-    return this.documentsService.findAll(session.userId);
+    @Query() query: GetDocumentWithPaginationDto,
+  ): Promise<DocumentsWithPagination> {
+    const { currentPage, rowsPerPage } = query;
+
+    return this.documentsService.findAllWithPagination(
+      session.userId,
+      currentPage,
+      rowsPerPage,
+    );
   }
 
   @Get('/document/:id/files')

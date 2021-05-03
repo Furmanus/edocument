@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateDocumentDto } from '../dto/documents.dto';
 import { AppDocument, DocumentType } from '../schemas/document.schema';
+import { DocumentsWithPagination } from '../interfaces/interfaces';
 
 type PreparedDocumentDto = Omit<CreateDocumentDto, 'documentFile'> & {
   documentFiles: string[];
@@ -42,6 +43,32 @@ export class DocumentsService {
 
   public findAll(userId: string): Promise<AppDocument[]> {
     return this.DocumentModel.find({ owner: userId }).exec();
+  }
+
+  public async findAllWithPagination(
+    userId: string,
+    currentPage: number,
+    rowsPerPage: number,
+  ): Promise<DocumentsWithPagination> {
+    const rows = Number(rowsPerPage);
+    const page = Number(currentPage);
+
+    const [documents, totalCount] = await Promise.all([
+      this.DocumentModel.find({ owner: userId })
+        .limit(rows)
+        .skip(page * rows)
+        .exec(),
+      this.countUserDocuments(userId),
+    ]);
+
+    return {
+      documents,
+      totalCount,
+    };
+  }
+
+  private countUserDocuments(userId: string): Promise<number> {
+    return this.DocumentModel.count({ owner: userId }).exec();
   }
 
   public findEntry(userId: string, documentId: string): Promise<AppDocument> {

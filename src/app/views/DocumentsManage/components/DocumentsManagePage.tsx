@@ -25,6 +25,7 @@ import { AppLoader } from '../../../components/Loader';
 import { DocumentManageImagePreviewModal } from './DocumentManageImagePreviewModal';
 import { DocumentsManageDeleteConfirmModal } from './DocumentsManageDeleteConfirmModal';
 import { ApplicationApi } from '../../../api/api';
+import { DocumentsManageTablePagination } from './datatable/DocumentsManageTablePagination';
 
 const useStyles = makeStyles({
   container: {
@@ -64,7 +65,16 @@ export function DocumentsManagePage(): JSX.Element {
   const history = useHistory();
   const { state, dispatch } = useContext(AppContext);
   const { examinedDocument } = state;
-  const [documents, isFetchingDocuments, fetchDocuments] = useDocumentsManage();
+  const {
+    isFetching: isFetchingDocuments,
+    documents,
+    fetchDocuments,
+    currentPage,
+    onPageChange,
+    onPerPageChange,
+    rowsPerPage,
+    totalDocuments,
+  } = useDocumentsManage();
   const [deletingDocumentId, setDeletingDocumentId] = useState<string>(null);
   const [isDeletingDocument, setIsDeletingDocument] = useState<boolean>(false);
   const onCreateClick = useCallback(() => {
@@ -133,18 +143,27 @@ export function DocumentsManagePage(): JSX.Element {
         {isFetchingDocuments || documents === null ? (
           <AppLoader />
         ) : (
-          <Table>
-            <DocumentsManageTableHeader />
-            <TableBody>
-              {documents.map((document) => (
-                <DocumentsManageTableRow
-                  key={document._id}
-                  document={document}
-                  handleDeleteClick={handleDeleteClick}
-                />
-              ))}
-            </TableBody>
-          </Table>
+          <React.Fragment>
+            <Table>
+              <DocumentsManageTableHeader />
+              <TableBody>
+                {documents.map((document) => (
+                  <DocumentsManageTableRow
+                    key={document._id}
+                    document={document}
+                    handleDeleteClick={handleDeleteClick}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+            <DocumentsManageTablePagination
+              currentPage={currentPage}
+              rowsPerPage={rowsPerPage}
+              onChangePage={onPageChange}
+              onChangeRowsPerPage={onPerPageChange}
+              totalRows={totalDocuments}
+            />
+          </React.Fragment>
         )}
       </TableContainer>
       <DocumentsManageDetailsModal

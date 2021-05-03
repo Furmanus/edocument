@@ -13,3 +13,8 @@ export interface IDocument {
 export type DocumentWithPreviews = IDocument & {
   filesPreviews: string[];
 };
+
+export interface IDocumentWithPagination {
+  documents: IDocument[];
+  totalCount: number;
+}
