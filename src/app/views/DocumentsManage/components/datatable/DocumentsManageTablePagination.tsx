@@ -1,6 +1,6 @@
 import { makeStyles, TablePagination } from '@material-ui/core';
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface IProps {
   totalRows: number;
@@ -13,6 +13,22 @@ interface IProps {
 const useStyles = makeStyles({
   wrapper: {
     width: '100%',
+  },
+  toolbar: {
+    '@media (max-width: 360px)': {
+      paddingLeft: 5,
+    },
+  },
+  input: {
+    '@media (max-width: 360px)': {
+      marginLeft: 0,
+      marginRight: 8,
+    },
+  },
+  actions: {
+    '@media (max-width: 360px)': {
+      marginLeft: 5,
+    },
   },
 });
 const rowsPerPageOptions = [5, 10, 25];
@@ -39,10 +55,19 @@ export function DocumentsManageTablePagination({
     },
     [onChangeRowsPerPage],
   );
+  const overridedClasses = useMemo(
+    () => ({
+      toolbar: classes.toolbar,
+      input: classes.input,
+      actions: classes.actions,
+    }),
+    [],
+  );
 
   return (
     <TablePagination
       className={classes.wrapper}
+      classes={overridedClasses}
       component="div"
       page={currentPage}
       onChangePage={handlePageChange}
