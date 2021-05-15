@@ -1,9 +1,16 @@
 import axios, { AxiosResponse } from 'axios';
+import { IManageFilters } from '../../../common/interfaces/interfaces';
 import {
   DocumentWithPreviews,
   IDocumentWithPagination,
 } from '../views/DocumentsManage/interfaces/interfaces';
 import { IDocumentSettingsFormData } from '../views/DocumentsSettings/interfaces/interfaces';
+
+type GetDocumentsParams = Omit<IManageFilters, 'tags'> & {
+  tags: string | string[];
+  currentPage: number;
+  rowsPerPage: number;
+};
 
 function createFormDataFromObject(data: object): FormData {
   const formData = new FormData();
@@ -63,9 +70,22 @@ export class ApplicationApi {
   public static getDocuments(
     currentPage: number,
     rowsPerPage: number,
+    manageFilters: IManageFilters,
   ): Promise<IDocumentWithPagination> {
+    const params: GetDocumentsParams = {
+      currentPage,
+      rowsPerPage,
+      ...manageFilters,
+    };
+
+    if (manageFilters.tags) {
+      params.tags = manageFilters.tags.join(',');
+    }
+
     return axios
-      .get('/data/document', { params: { currentPage, rowsPerPage } })
+      .get('/data/document', {
+        params,
+      })
       .then((response: AxiosResponse) => response.data);
   }
 

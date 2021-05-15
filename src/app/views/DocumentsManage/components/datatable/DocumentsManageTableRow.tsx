@@ -61,6 +61,7 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
     documentDate,
     documentTags,
   } = document;
+  const tagsDisplayValue = documentTags?.join(', ');
 
   return (
     <TableRow>
@@ -74,11 +75,8 @@ export function DocumentsManageTableRow(props: IProps): JSX.Element {
         {documentDate || EMPTY_CELL_MARK}
       </TableCell>
       {!isMobile && (
-        <TableCell
-          title={document[CreateDocumentFormFields.DocumentTags]}
-          className={classes.tagsCell}
-        >
-          {documentTags || EMPTY_CELL_MARK}
+        <TableCell title={tagsDisplayValue} className={classes.tagsCell}>
+          {tagsDisplayValue || EMPTY_CELL_MARK}
         </TableCell>
       )}
       {!isMobile && (

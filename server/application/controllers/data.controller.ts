@@ -106,7 +106,7 @@ export class DataController {
       {
         documentName: body.documentName,
         documentDate: body.documentDate,
-        documentTags: body.documentTags,
+        documentTags: body.documentTags?.split(','),
         documentNetValue: body.documentNetValue,
         documentGrossValue: body.documentGrossValue,
         documentFiles: hasNewFilesBeenAdded ? uploadedFilesKeys : documentFiles,
@@ -124,11 +124,13 @@ export class DataController {
     @BodyWithFiles(CreateDocumentValidationPipe) body: CreateDocumentBody,
     @Session() session: IApplicationSession,
   ): Promise<AppDocument> {
+    const tags = body.documentTags ? body.documentTags.split(',') : [];
+
     const uploadedFilesKeys = await this.awsService.uploadFiles(body.files);
     const createdDocument = await this.documentsService.create({
       documentName: body.documentName,
       documentDate: body.documentDate,
-      documentTags: body.documentTags,
+      documentTags: tags,
       documentNetValue: body.documentNetValue,
       documentGrossValue: body.documentGrossValue,
       documentFiles: uploadedFilesKeys,
@@ -169,12 +171,14 @@ export class DataController {
     @Session() session: IApplicationSession,
     @Query() query: GetDocumentWithPaginationDto,
   ): Promise<DocumentsWithPagination> {
-    const { currentPage, rowsPerPage } = query;
+    const { currentPage, rowsPerPage, maxDate, minDate, name, tags } = query;
+    const filters = { maxDate, minDate, name, tags: tags && tags.split(',') };
 
     return this.documentsService.findAllWithPagination(
       session.userId,
       currentPage,
       rowsPerPage,
+      filters,
     );
   }
 

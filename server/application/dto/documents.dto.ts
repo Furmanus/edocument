@@ -10,4 +10,8 @@ export class CreateDocumentDto {
 export class GetDocumentWithPaginationDto {
   currentPage: number;
   rowsPerPage: number;
+  name: string;
+  minDate: string;
+  maxDate: string;
+  tags: string;
 }

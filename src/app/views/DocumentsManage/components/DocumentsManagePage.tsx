@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {
+  Box,
   Button,
+  IconButton,
   makeStyles,
   Paper,
   Table,
@@ -26,6 +28,8 @@ import { DocumentManageImagePreviewModal } from './DocumentManageImagePreviewMod
 import { DocumentsManageDeleteConfirmModal } from './DocumentsManageDeleteConfirmModal';
 import { ApplicationApi } from '../../../api/api';
 import { DocumentsManageTablePagination } from './datatable/DocumentsManageTablePagination';
+import { Search } from '@material-ui/icons';
+import { DocumentsManageFiltersModal } from './DocumentsManageFiltersModal';
 
 const useStyles = makeStyles({
   container: {
@@ -51,11 +55,20 @@ const useStyles = makeStyles({
     textTransform: 'uppercase',
   },
   createButton: {
-    alignSelf: 'flex-end',
+    marginLeft: 20,
     marginRight: 20,
+  },
+  buttonContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     '@media (max-width: 480px)': {
       marginTop: 15,
       marginBottom: 15,
+      marginLeft: 16,
+      justifyContent: 'space-between',
     },
   },
 });
@@ -74,6 +87,12 @@ export function DocumentsManagePage(): JSX.Element {
     onPerPageChange,
     rowsPerPage,
     totalDocuments,
+    manageFilters,
+    isFiltersModalOpen,
+    onFiltersButtonClick,
+    onFiltersModalClose,
+    onFiltersModalSave,
+    userTags,
   } = useDocumentsManage();
   const [deletingDocumentId, setDeletingDocumentId] = useState<string>(null);
   const [isDeletingDocument, setIsDeletingDocument] = useState<boolean>(false);
@@ -128,17 +147,22 @@ export function DocumentsManagePage(): JSX.Element {
       <Typography className={classes.heading} component="h1" variant="h5">
         {DocumentsManageTexts.DocumentsManageHeading}
       </Typography>
-      <Button
-        className={classes.createButton}
-        variant="outlined"
-        color="primary"
-        size="small"
-        onClick={onCreateClick}
-      >
-        <Typography variant="button">
-          {DocumentsManageTexts.DocumentsManageAddButtonText}
-        </Typography>
-      </Button>
+      <Box className={classes.buttonContainer}>
+        <IconButton size="small" color="primary" onClick={onFiltersButtonClick}>
+          <Search />
+        </IconButton>
+        <Button
+          className={classes.createButton}
+          variant="outlined"
+          color="primary"
+          size="small"
+          onClick={onCreateClick}
+        >
+          <Typography variant="button">
+            {DocumentsManageTexts.DocumentsManageAddButtonText}
+          </Typography>
+        </Button>
+      </Box>
       <TableContainer>
         {isFetchingDocuments || documents === null ? (
           <AppLoader />
@@ -180,6 +204,13 @@ export function DocumentsManagePage(): JSX.Element {
         handleConfirmClick={handleConfirmDeleteClick}
         handleRejectClick={handleRejectDeleteClick}
         isDeleting={isDeletingDocument}
+      />
+      <DocumentsManageFiltersModal
+        isOpen={isFiltersModalOpen}
+        onClose={onFiltersModalClose}
+        onSave={onFiltersModalSave}
+        currentFilters={manageFilters}
+        userTags={userTags}
       />
     </Paper>
   );

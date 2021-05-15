@@ -3,3 +3,14 @@ export interface IApiError {
   message?: string;
   fieldName?: string;
 }
+
+export interface IManageFilters {
+  name: string;
+  minDate: string;
+  maxDate: string;
+  tags: string[];
+}
+
+export type IManageFiltersApi = Partial<
+  Omit<IManageFilters, 'tags'> & { tags: string }
+>;

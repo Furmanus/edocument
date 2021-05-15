@@ -22,4 +22,16 @@ export const enum DocumentsManageTexts {
   DocumentDeleteModalConfirm = 'Yes, delete it',
   DocumentDeleteSuccessSnackbarText = 'Document deleted successfully',
   DocumentDeleteFailureSnackbarText = 'Failed to delete document: error',
+  // FILTERS MODAL
+  DocumentsFiltersHeading = 'Select filters',
+  DocumentsFiltersModalSaveFiltersButton = 'Save',
+  DocumentsFiltersModalCancelFiltersButton = 'Cancel',
+  DocumentsFiltersNameInputLabel = 'Name',
+  DocumentsFiltersMinDateInputLabel = 'Minimum date',
+  DocumentsFiltersMaxDateInputLabel = 'Maximum date',
+  DocumentsFiltersTagsSelectLabel = 'Tags',
+  DocumentsFiltersMinNetValueInputLabel = 'Minimum net value',
+  DocumentsFiltersMaxNetValueInputLabel = 'Maximum net value',
+  DocumentsFiltersMinGrossValueInputLabel = 'Minimum gross value',
+  DocumentsFiltersMaxGrossValueInputLabel = 'Maximum gross value',
 }
