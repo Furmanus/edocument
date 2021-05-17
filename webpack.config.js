@@ -15,6 +15,7 @@ const plugins = [
     publicPath: path.sep,
     template: path.resolve(__dirname, 'templates', 'login.hbs'),
     filename: 'login.hbs',
+    favicon: path.resolve(__dirname, 'templates', 'favicon.png'),
   }),
   new HtmlWebpackPlugin({
     title: 'E-Document',
@@ -26,6 +27,7 @@ const plugins = [
     publicPath: path.sep,
     template: path.resolve(__dirname, 'templates', 'app.hbs'),
     filename: 'app.hbs',
+    favicon: path.resolve(__dirname, 'templates', 'favicon.png'),
   }),
 ];
 
