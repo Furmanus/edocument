@@ -26,10 +26,7 @@ export function DocumentsManageDetailsModalPreviewSection({
         <AppLoader />
       ) : (
         images.map((src, index) => (
-          <DocumentManageDetailsPreviewImage
-            key={index}
-            src={`data:image/png; base64, ${src}`}
-          />
+          <DocumentManageDetailsPreviewImage key={index} src={src} />
         ))
       )}
     </Box>

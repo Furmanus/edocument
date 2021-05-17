@@ -59,10 +59,19 @@ export class AwsService {
       (file) => file.stream,
     );
 
-    return Promise.all(fileStreams.map(this.getBase64FromStream));
+    return Promise.all(
+      fileStreams.map((stream, index) => {
+        const fileType = files[index].split('.')[1];
+
+        return this.getBase64FromStream(stream as Readable, fileType);
+      }),
+    );
   }
 
-  private getBase64FromStream(stream: Readable): Promise<string> {
+  private getBase64FromStream(
+    stream: Readable,
+    fileType: string,
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       const data: Uint8Array[] = [];
 
@@ -72,8 +81,13 @@ export class AwsService {
 
       stream.on('data', onData);
       stream.once('end', () => {
+        const result = Buffer.concat(data).toString('base64');
+        const mimeType =
+          fileType === 'pdf' ? 'application/pdf' : `image/${fileType}`;
+
+        resolve(`data:${mimeType}; base64, ${result}`);
+
         stream.off('data', onData);
-        resolve(Buffer.concat(data).toString('base64'));
       });
       stream.once('error', reject);
     });

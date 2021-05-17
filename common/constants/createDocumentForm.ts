@@ -12,7 +12,7 @@ export const enum CreateDocumentFormFields {
 }
 
 export const acceptedFileUploadFiles = [
-  'image/pdf',
+  'application/pdf',
   'image/png',
   'image/gif',
   'image/jpg',
