@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AppContext } from '../../../../AppRoot';
-import { openImageModalAction } from '../../../../actions/appActions';
+import {
+  openImageModalAction,
+  openSnackBarAction,
+} from '../../../../actions/appActions';
+import PreviewUnavailableImage from '../../../../../common/assets/unavailable.png';
+import { DocumentsManageTexts } from '../../constants/documentsManageTexts';
 
 interface IProps {
   src: string;
@@ -24,16 +29,27 @@ export function DocumentManageDetailsPreviewImage({
 }: IProps): JSX.Element {
   const classes = useStyles();
   const { dispatch } = useContext(AppContext);
+  const [imageSrc, setImageSrc] = useState<string>(src);
   const onImageClick = () => {
-    dispatch(openImageModalAction(src));
+    dispatch(openImageModalAction(imageSrc));
+  };
+  const onImageError = () => {
+    setImageSrc(PreviewUnavailableImage);
+    dispatch(
+      openSnackBarAction(
+        DocumentsManageTexts.PreviewImageUnavailable,
+        'warning',
+      ),
+    );
   };
 
   return (
     <img
       className={classes.imageWrapper}
-      src={src}
+      src={imageSrc}
       alt="preview"
       onClick={onImageClick}
+      onError={onImageError}
     />
   );
 }

@@ -15,6 +15,7 @@ export const enum DocumentsManageTexts {
   DocumentDetailsTagsLabel = 'Tags: ',
   DocumentDetailsNetValueLabel = 'Net value: ',
   DocumentDetailsGrossValueLabel = 'Gross value: ',
+  PreviewImageUnavailable = 'Preview for pdf files unavailable',
   // DELETE CONFIRM MODAL
   DocumentDeleteModalHeading = 'Confirm',
   DocumentDeleteModalContent = "Are you sure you want to delete selected entry? This can't be undone.",
