@@ -10,6 +10,7 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
     "outDir": "./build",
     "baseUrl": "./server"
   },

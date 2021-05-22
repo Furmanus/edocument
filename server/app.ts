@@ -11,7 +11,7 @@ import MongoStore from 'connect-mongo';
 const { PORT } = process.env;
 const mongoStore = MongoStore.create({ mongoUrl: process.env.DATABASE_URL });
 
-async function bootstrap(): Promise<void> {
+async function app(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.use(helmet());
@@ -32,4 +32,4 @@ async function bootstrap(): Promise<void> {
   await app.listen(PORT || 3000);
 }
 
-bootstrap();
+app();
