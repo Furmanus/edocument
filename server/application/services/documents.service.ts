@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, UpdateWriteOpResult } from 'mongoose';
 import { CreateDocumentDto } from '../dto/documents.dto';
 import { AppDocument, DocumentType } from '../schemas/document.schema';
 import { DocumentsWithPagination } from '../interfaces/interfaces';
@@ -35,14 +35,14 @@ export class DocumentsService {
     userId: string,
     documentId: string,
     newDocumentData: AddDocumentDataType,
-  ): Promise<AppDocument> {
+  ): Promise<UpdateWriteOpResult> {
     return this.DocumentModel.updateOne(
       { owner: userId, _id: documentId },
       newDocumentData,
     ).exec();
   }
 
-  public delete(ownerId: string, documentId: string): Promise<void> {
+  public delete(ownerId: string, documentId: string): Promise<unknown> {
     return this.DocumentModel.deleteOne({
       owner: ownerId,
       _id: documentId,

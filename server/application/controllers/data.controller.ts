@@ -35,6 +35,7 @@ import { Response } from 'express';
 import { EditDocumentValidationPipe } from '../pipes/editDocument.pipe';
 import { ErrorCodes } from '../../../common/constants/errors';
 import { DocumentsWithPagination } from '../interfaces/interfaces';
+import { UpdateWriteOpResult } from 'mongoose';
 
 export type CreateDocumentBody = Omit<CreateDocumentDto, 'documentFile'> & {
   files: IFile[];
@@ -84,7 +85,7 @@ export class DataController {
     @Param('documentId') documentId: string,
     @BodyWithFiles(EditDocumentValidationPipe) body: EditDocumentBody,
     @Session() session: IApplicationSession,
-  ): Promise<AppDocument> {
+  ): Promise<UpdateWriteOpResult> {
     const currentDocument = await this.documentsService.findEntry(
       session.userId,
       documentId,
