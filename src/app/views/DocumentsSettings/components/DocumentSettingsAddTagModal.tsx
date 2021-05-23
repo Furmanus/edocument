@@ -16,6 +16,7 @@ import { addTagErrorCodeToMessageMap } from '../constants/addTagFormErrors';
 import { AppButton } from '../../../../common/components/AppButton';
 import { AppContext } from '../../../AppRoot';
 import { openSnackBarAction } from '../../../actions/appActions';
+import { IApiError } from '../../../../../common/interfaces/interfaces';
 
 Modal.setAppElement('#app');
 
@@ -117,16 +118,19 @@ export function DocumentSettingsAddTagModal(props: IProps) {
       let globalError;
 
       if (Array.isArray(errors)) {
-        const reducedErrors = errors.reduce((result, error) => {
-          if (error.fieldName) {
-            result[error.fieldName] =
-              addTagErrorCodeToMessageMap[error.errorCode];
-          } else {
-            globalError = addTagErrorCodeToMessageMap[error.errorCode];
-          }
+        const reducedErrors = errors.reduce(
+          (result: { [key: string]: string }, error: IApiError) => {
+            if (error.fieldName) {
+              result[error.fieldName] =
+                addTagErrorCodeToMessageMap[error.errorCode];
+            } else {
+              globalError = addTagErrorCodeToMessageMap[error.errorCode];
+            }
 
-          return result;
-        }, {});
+            return result;
+          },
+          {},
+        );
 
         if (globalError) {
           dispatch(openSnackBarAction(globalError, 'error'));

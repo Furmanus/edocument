@@ -1,8 +1,7 @@
-import * as archiver from 'archiver';
+import archiver, { Archiver } from 'archiver';
 import { Injectable } from '@nestjs/common';
 import { DownloadedFileType } from '../interfaces/interfaces';
 import { Readable } from 'stream';
-import { Archiver } from 'archiver';
 
 @Injectable()
 export class CompressService {
