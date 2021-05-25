@@ -8,7 +8,8 @@
     "build:server": "rm -rf build && tsc",
     "build:client": "rm -rf dist && webpack --config webpack.config.js",
     "start": "run-p server:dev build:client",
-    "server:dev": "nodemon server/app.ts",
+    "start:prod": "run-s build:client @build:server",
+    "server:dev": "nodemon server/bootstrap.ts",
     "type-check": "tsc --noEmit"
   },
   "author": "Lukasz Lach",

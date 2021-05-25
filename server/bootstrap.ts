@@ -8,10 +8,10 @@ import { resolve } from 'path';
 import { AppModule } from './app.module';
 import MongoStore from 'connect-mongo';
 
-const { PORT } = process.env;
-const mongoStore = MongoStore.create({ mongoUrl: process.env.DATABASE_URL });
+const { PORT, DATABASE_URL } = process.env;
+const mongoStore = MongoStore.create({ mongoUrl: DATABASE_URL });
 
-async function app(): Promise<void> {
+export async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.use(helmet());
@@ -25,11 +25,9 @@ async function app(): Promise<void> {
       store: mongoStore,
     }),
   );
-  app.useStaticAssets(resolve(__dirname, '..', 'dist'));
-  app.setBaseViewsDir(resolve(__dirname, '..', 'dist'));
+  app.useStaticAssets(resolve(__dirname, '..', '..', 'dist'));
+  app.setBaseViewsDir(resolve(__dirname, '..', '..', 'dist'));
   app.setViewEngine('hbs');
 
   await app.listen(PORT || 3000);
 }
-
-app();
