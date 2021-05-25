@@ -1,3 +1,5 @@
 const { bootstrap } = require('./build/server/bootstrap');
 
-bootstrap();
+if (process.env.MODE === 'production') {
+  bootstrap();
+}

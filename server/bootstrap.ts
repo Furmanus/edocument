@@ -31,3 +31,7 @@ export async function bootstrap(): Promise<void> {
 
   await app.listen(PORT || 3000);
 }
+
+if (process.env.MODE === 'development') {
+  bootstrap();
+}

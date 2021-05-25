@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { resolve } from 'path';
 import { ApplicationController } from './controllers/application.controller';
 import { DataController } from './controllers/data.controller';
 import { TagsService } from './services/tags.service';
@@ -16,7 +17,9 @@ import { CompressService } from './services/compress.service';
       { name: Tag.name, schema: TagSchema },
       { name: AppDocument.name, schema: DocumentSchema },
     ]),
-    MulterModule.register(),
+    MulterModule.register({
+      dest: resolve(__dirname, '..', '..', 'tempUpload'),
+    }),
   ],
   controllers: [ApplicationController, DataController],
   providers: [TagsService, DocumentsService, AwsService, CompressService],
