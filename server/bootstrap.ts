@@ -25,13 +25,11 @@ export async function bootstrap(): Promise<void> {
       store: mongoStore,
     }),
   );
-  app.useStaticAssets(resolve(__dirname, '..', '..', 'dist'));
-  app.setBaseViewsDir(resolve(__dirname, '..', '..', 'dist'));
+  app.useStaticAssets(resolve(__dirname, '..', 'dist'));
+  app.setBaseViewsDir(resolve(__dirname, '..', 'dist'));
   app.setViewEngine('hbs');
 
   await app.listen(PORT || 3000);
 }
 
-if (process.env.MODE === 'development') {
-  bootstrap();
-}
+bootstrap();

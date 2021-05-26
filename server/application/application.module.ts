@@ -10,7 +10,7 @@ import { DocumentsService } from './services/documents.service';
 import { AwsService } from './services/aws.service';
 import { AppDocument, DocumentSchema } from './schemas/document.schema';
 import { CompressService } from './services/compress.service';
-// TODO in case of moving service to VPS, use diskStorage for multer
+
 @Module({
   imports: [
     MongooseModule.forFeature([
