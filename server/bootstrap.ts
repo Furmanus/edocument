@@ -52,8 +52,8 @@ export async function bootstrap(): Promise<void> {
       store: mongoStore,
     }),
   );
-  app.useStaticAssets(resolve(__dirname, '..', 'dist'));
-  app.setBaseViewsDir(resolve(__dirname, '..', 'dist'));
+  app.useStaticAssets(resolve(appRootPath, 'dist'));
+  app.setBaseViewsDir(resolve(appRootPath, 'dist'));
   app.setViewEngine('hbs');
 
   await app.init();
