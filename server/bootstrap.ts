@@ -17,9 +17,17 @@ import MongoStore from 'connect-mongo';
 import { readFileSync } from 'fs';
 
 const appRootPath = appRoot.toString();
-const { PORT, HTTPS_PORT, DATABASE_URL } = process.env;
-const PRIVATE_KEY_PATH = resolve(appRootPath, 'certs', 'key.pem');
-const CERT_PATH = resolve(appRootPath, 'certs', 'cert.pem');
+const {
+  PORT,
+  HTTPS_PORT,
+  DATABASE_URL,
+  CERT_PATH,
+  PRIVATE_KEY_PATH,
+} = process.env;
+const certPathSegmented = CERT_PATH.split('/');
+const privateKeyPathSegmented = PRIVATE_KEY_PATH.split('/');
+const privateKeyPath = resolve(appRootPath, ...privateKeyPathSegmented);
+const certPath = resolve(appRootPath, ...certPathSegmented);
 const mongoStore = MongoStore.create({ mongoUrl: DATABASE_URL });
 
 export async function bootstrap(): Promise<void> {
@@ -29,8 +37,8 @@ export async function bootstrap(): Promise<void> {
     new ExpressAdapter(server),
   );
   const httpsOptions = {
-    key: readFileSync(PRIVATE_KEY_PATH, 'utf8'),
-    cert: readFileSync(CERT_PATH, 'utf8'),
+    key: readFileSync(privateKeyPath, 'utf8'),
+    cert: readFileSync(certPath, 'utf8'),
   };
 
   app.use(helmet());
