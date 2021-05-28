@@ -36,10 +36,16 @@ export async function bootstrap(): Promise<void> {
     AppModule,
     new ExpressAdapter(server),
   );
-  const httpsOptions = {
-    key: readFileSync(privateKeyPath, 'utf8'),
-    cert: readFileSync(certPath, 'utf8'),
-  };
+  let httpsOptions;
+
+  try {
+    httpsOptions = {
+      key: readFileSync(privateKeyPath, 'utf8'),
+      cert: readFileSync(certPath, 'utf8'),
+    };
+  } catch {
+    httpsOptions = null;
+  }
 
   app.use(helmet());
   app.use(json());
@@ -59,7 +65,10 @@ export async function bootstrap(): Promise<void> {
   await app.init();
 
   http.createServer(server).listen(PORT);
-  https.createServer(httpsOptions, server).listen(HTTPS_PORT);
+
+  if (httpsOptions) {
+    https.createServer(httpsOptions, server).listen(HTTPS_PORT);
+  }
 }
 
 bootstrap();
