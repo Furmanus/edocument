@@ -8,7 +8,8 @@
     "build:server": "rm -rf build && tsc",
     "build:client": "rm -rf dist && webpack --config webpack.config.js",
     "start": "run-p server:dev build:client",
-    "start:prod": "run-s build:client build:server",
+    "start:prod": "pm2 start build/server/bootstrap.js",
+    "stop": "pm2 kill",
     "server:dev": "nodemon server/bootstrap.ts",
     "type-check": "tsc --noEmit"
   },
@@ -45,6 +46,7 @@
     "mongoose": "^5.11.15",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
+    "pm2": "^4.5.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-final-form": "^6.5.2",
