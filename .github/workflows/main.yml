@@ -48,8 +48,9 @@ jobs:
           script: |
             cd edocument
             export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "~/.nvm/nvm.sh" ] && \. "~/.nvm/nvm.sh"
             npm install
             npm run build:client
             npm run stop
             npm run start:prod
+
