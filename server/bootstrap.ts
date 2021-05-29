@@ -81,5 +81,3 @@ export async function bootstrap(): Promise<void> {
 }
 
 bootstrap();
-/// etc/letsencrypt/live/edocument.pl/fullchain.pem
-/// etc/letsencrypt/live/edocument.pl/privkey.pem
