@@ -47,8 +47,8 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
           script: |
             cd edocument
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "~/.nvm/nvm.sh" ] && \. "~/.nvm/nvm.sh"
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
             npm install
             npm run build:client
             npm run stop
