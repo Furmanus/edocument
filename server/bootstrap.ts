@@ -44,9 +44,9 @@ export async function bootstrap(): Promise<void> {
       key: readFileSync(privateKeyPath, 'utf8'),
       cert: readFileSync(certPath, 'utf8'),
     };
-  } catch {
+  } catch (e) {
     httpsOptions = null;
-    console.error('Failed to read ssl cert files');
+    console.error('Failed to read ssl cert files', e);
   }
 
   app.use(helmet());
