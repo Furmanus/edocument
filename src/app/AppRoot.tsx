@@ -49,7 +49,7 @@ export function AppRoot(): JSX.Element {
   const onWindowResize = useCallback(() => {
     dispatch(windowResizeAction());
   }, []);
-
+  console.log('test');
   useEffect(() => {
     window.addEventListener('resize', onWindowResize);
 
