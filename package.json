@@ -27,6 +27,8 @@
     "@nestjs/mongoose": "^7.2.3",
     "@nestjs/passport": "^7.1.5",
     "@nestjs/platform-express": "^7.6.5",
+    "@sentry/browser": "^6.4.1",
+    "@sentry/tracing": "^6.4.1",
     "@types/axios": "^0.14.0",
     "@types/helmet": "^4.0.0",
     "app-root-path": "^3.0.0",

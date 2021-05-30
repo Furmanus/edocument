@@ -16,6 +16,7 @@ import { AppModule } from './app.module';
 import MongoStore from 'connect-mongo';
 import { readFileSync } from 'fs';
 import { cspWithoutUpgradeInsecureRequests } from './common/utils/helmet';
+import { dangerouslyDisableDefaultSrc } from 'helmet/dist/middlewares/content-security-policy';
 
 const appRootPath = appRoot.toString();
 const {
@@ -54,6 +55,7 @@ export async function bootstrap(): Promise<void> {
     helmet.contentSecurityPolicy({
       directives: {
         ...cspWithoutUpgradeInsecureRequests,
+        'default-src': dangerouslyDisableDefaultSrc,
       },
     }),
   );
