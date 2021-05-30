@@ -48,6 +48,7 @@ jobs:
           script: |
             cd edocument
             npm install
+            npm run build:server
             npm run build:client
             npm run stop
             npm run start:prod
