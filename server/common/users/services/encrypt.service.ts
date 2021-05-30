@@ -10,6 +10,10 @@ export class EncryptService {
   }
 
   public compareText(plainText: string, hash: string): Promise<boolean> {
+    if (!plainText || !hash) {
+      return Promise.resolve(false);
+    }
+
     return bcrypt.compare(plainText, hash);
   }
 }

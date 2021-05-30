@@ -57,7 +57,7 @@ export class AuthService {
     const user = await this.usersService.findUser(userName);
     const doesPasswordMatch = await this.encryptService.compareText(
       password,
-      user.password,
+      user?.password,
     );
 
     if (!user || !doesPasswordMatch) {
