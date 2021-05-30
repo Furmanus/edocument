@@ -10,6 +10,7 @@
     "start": "run-p server:dev build:client",
     "start:prod": "pm2 start build/server/bootstrap.js",
     "stop": "pm2 kill",
+    "list": "pm2 list",
     "server:dev": "nodemon server/bootstrap.ts",
     "type-check": "tsc --noEmit"
   },
