@@ -17,6 +17,7 @@ import MongoStore from 'connect-mongo';
 import { readFileSync } from 'fs';
 import { cspWithoutUpgradeInsecureRequests } from './common/utils/helmet';
 import { dangerouslyDisableDefaultSrc } from 'helmet/dist/middlewares/content-security-policy';
+import './common/utils/sentry';
 
 const appRootPath = appRoot.toString();
 const {
