@@ -47,7 +47,7 @@ export class ApplicationController {
   public logout(@Session() session: IApplicationSession): void {
     session.destroy((err) => {
       // TODO Add logger
-      console.error(err);
+      console.error('failed to destroy session', err);
     });
   }
 }

@@ -4,7 +4,21 @@ import {
   USERNAME_MIN_LENGTH,
 } from '../../../common/constants/loginForm';
 
-export function validateUserName(userName: string): string {
+type ValidationConfig = {
+  mode?: 'login' | 'register';
+};
+
+export function validateUserName(
+  userName: string,
+  { mode }: ValidationConfig = {},
+): string {
+  if (mode === 'login') {
+    if (!userName) {
+      return LoginTexts.UserNameEmpty;
+    }
+
+    return null;
+  }
   if (userName.length < USERNAME_MIN_LENGTH) {
     return LoginTexts.UserNameTooShort;
   }
@@ -12,7 +26,17 @@ export function validateUserName(userName: string): string {
   return null;
 }
 
-export function validateUserPassword(password: string): string {
+export function validateUserPassword(
+  password: string,
+  { mode }: ValidationConfig = {},
+): string {
+  if (mode === 'login') {
+    if (!password) {
+      return LoginTexts.UserPasswordEmpty;
+    }
+
+    return null;
+  }
   if (password.length < PASSWORD_MIN_LENGTH) {
     return LoginTexts.PasswordTooShort;
   }

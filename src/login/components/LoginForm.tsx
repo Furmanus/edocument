@@ -111,9 +111,7 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
 
     e.preventDefault();
 
-    if (mode === 'register') {
-      this.validateForm();
-    }
+    await this.validateForm();
 
     if (!this.isFormValid) {
       return;
@@ -130,15 +128,27 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
     }
   };
 
-  private validateForm(): void {
-    this.setState((state) => ({
-      loginInputError: validateUserName(state.userInputValue),
-      passwordInputError: validateUserPassword(state.passwordInputValue),
-      repeatPasswordInputError: validateRepeatPassword(
-        state.passwordInputValue,
-        state.repeatPasswordInputValue,
-      ),
-    }));
+  private validateForm(): Promise<void> {
+    return new Promise((resolve) => {
+      this.setState(
+        (state) => ({
+          loginInputError: validateUserName(state.userInputValue, {
+            mode: state.mode,
+          }),
+          passwordInputError: validateUserPassword(state.passwordInputValue, {
+            mode: state.mode,
+          }),
+          repeatPasswordInputError: validateRepeatPassword(
+            state.passwordInputValue,
+            state.repeatPasswordInputValue,
+          ),
+          loginInputHasBeenTouched: true,
+          passwordInputHasBeenTouched: true,
+          repeatPasswordInputHasBeenTouched: true,
+        }),
+        resolve,
+      );
+    });
   }
 
   private onUserChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -156,7 +166,9 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
 
   private onUserNameInputBlur = (e: FocusEvent<HTMLInputElement>): void => {
     this.setState({
-      loginInputError: validateUserName(e.target.value),
+      loginInputError: validateUserName(e.target.value, {
+        mode: this.state.mode,
+      }),
     });
   };
 
@@ -173,7 +185,9 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
     const { repeatPasswordInputValue } = this.state;
 
     this.setState({
-      passwordInputError: validateUserPassword(value),
+      passwordInputError: validateUserPassword(value, {
+        mode: this.state.mode,
+      }),
       repeatPasswordInputError: validateRepeatPassword(
         value,
         repeatPasswordInputValue,

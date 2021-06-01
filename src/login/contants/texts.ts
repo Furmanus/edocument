@@ -14,6 +14,8 @@ export const LoginTexts = {
   AlreadyAccountText: 'Already have account? Log in',
   // FORM ERRORS
   UserNameTooShort: `User name too short, at least ${USERNAME_MIN_LENGTH} chars required`,
+  UserNameEmpty: 'Empty user name',
+  UserPasswordEmpty: 'Empty user password',
   PasswordTooShort: `User password too short, at least ${PASSWORD_MIN_LENGTH} chars required`,
   RepeatPasswordDontMatch: 'Passwords does not match',
 };
