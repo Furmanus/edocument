@@ -21,6 +21,10 @@ import {
   validateUserName,
   validateUserPassword,
 } from '../utils/loginForm';
+import {
+  errorCodeToTextMap,
+  errorFieldNameToStateFieldMap,
+} from '../contants/errors';
 
 interface IState {
   readonly mode: 'login' | 'register';
@@ -117,14 +121,31 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
       return;
     }
 
-    if (mode === 'register') {
-      await createUserApi(userInputValue, passwordInputValue);
+    try {
+      if (mode === 'register') {
+        await createUserApi(userInputValue, passwordInputValue);
 
-      window.location.pathname = '/settings';
-    } else {
-      await loginUserApi(userInputValue, passwordInputValue);
+        window.location.pathname = '/settings';
+      } else {
+        await loginUserApi(userInputValue, passwordInputValue);
 
-      window.location.pathname = '/settings';
+        window.location.pathname = '/settings';
+      }
+    } catch (e) {
+      const errorData = e.response?.data?.message;
+
+      if (Array.isArray(errorData)) {
+        this.setState(
+          errorData.reduce((result, current) => {
+            if (current.fieldName in errorFieldNameToStateFieldMap) {
+              result[errorFieldNameToStateFieldMap[current.fieldName]] =
+                errorCodeToTextMap[current.errorCode];
+            }
+
+            return result;
+          }, {}),
+        );
+      }
     }
   };
 
