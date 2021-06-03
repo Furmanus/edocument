@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import Modal from '@material-ui/core/Modal';
 import * as React from 'react';
 import { IDocument } from '../interfaces/interfaces';
 import {
   Avatar,
+  Box,
   Card,
   CardContent,
   CardHeader,
@@ -20,6 +22,7 @@ import { DocumentsManageTexts } from '../constants/documentsManageTexts';
 import { DocumentsManageDetailsModalPreviewSection } from './detailsModal/DocumentManageDetailsModalPreviewSection';
 import { useDocumentsDetailsPreview } from '../hooks/useDocumentsDetailsPreview';
 import { formatCurrency } from '../../../utils/currency';
+import { CSSProperties } from '@material-ui/styles';
 
 interface IProps {
   isOpen: boolean;
@@ -42,6 +45,17 @@ const useStyles = makeStyles({
   },
   paper: {
     outline: 'none',
+    minWidth: 480,
+    '@media (max-width: 480px)': {
+      minWidth: 'unset',
+      width: '100%',
+    },
+  },
+  infoWrapper: {
+    display: 'grid',
+    gridTemplateColumns: '110px auto',
+    gridTemplateRows: '1fr 1fr 1fr',
+    gridGap: '5px 15px',
   },
 });
 
@@ -86,45 +100,55 @@ export function DocumentsManageDetailsModal({
             />
             <Divider />
             <CardContent>
-              <GridList cellHeight="auto" cols={2}>
-                <GridListTile className={classes.labelGridCell}>
+              <Box className={classes.infoWrapper}>
+                <Box
+                  className={classes.labelGridCell}
+                  style={getGridStyles(1, 1)}
+                >
                   <Typography>
                     {DocumentsManageTexts.DocumentDetailsTagsLabel}
                   </Typography>
-                </GridListTile>
-                <GridListTile>
+                </Box>
+                <Box>
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     noWrap={true}
+                    style={getGridStyles(2, 1)}
                   >
-                    {documentTags || EMPTY_VALUE}
+                    {documentTags?.join(', ') || EMPTY_VALUE}
                   </Typography>
-                </GridListTile>
-                <GridListTile className={classes.labelGridCell}>
+                </Box>
+                <Box
+                  className={classes.labelGridCell}
+                  style={getGridStyles(1, 2)}
+                >
                   <Typography>
                     {DocumentsManageTexts.DocumentDetailsNetValueLabel}
                   </Typography>
-                </GridListTile>
-                <GridListTile>
+                </Box>
+                <Box style={getGridStyles(2, 2)}>
                   <Typography variant="body2" color="textSecondary">
                     {(documentNetValue && formatCurrency(documentNetValue)) ||
                       EMPTY_VALUE}
                   </Typography>
-                </GridListTile>
-                <GridListTile className={classes.labelGridCell}>
+                </Box>
+                <Box
+                  className={classes.labelGridCell}
+                  style={getGridStyles(1, 3)}
+                >
                   <Typography>
                     {DocumentsManageTexts.DocumentDetailsGrossValueLabel}
                   </Typography>
-                </GridListTile>
-                <GridListTile>
+                </Box>
+                <Box style={getGridStyles(2, 3)}>
                   <Typography variant="body2" color="textSecondary">
                     {(documentGrossValue &&
                       formatCurrency(documentGrossValue)) ||
                       EMPTY_VALUE}
                   </Typography>
-                </GridListTile>
-              </GridList>
+                </Box>
+              </Box>
             </CardContent>
             <Divider />
             <DocumentsManageDetailsModalPreviewSection
@@ -136,4 +160,11 @@ export function DocumentsManageDetailsModal({
       </Fade>
     </Modal>
   );
+}
+
+function getGridStyles(column: number, row: number): CSSProperties {
+  return {
+    gridRow: row,
+    gridColumn: column,
+  };
 }
