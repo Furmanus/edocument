@@ -17,6 +17,7 @@ export const LoginTexts = {
   UserNameEmpty: 'Empty user name',
   UserPasswordEmpty: 'Empty user password',
   InvalidUserNameOrPassword: 'Invalid user name or password',
+  UserAlreadyExists: 'User already exists',
   PasswordTooShort: `User password too short, at least ${PASSWORD_MIN_LENGTH} chars required`,
   RepeatPasswordDontMatch: 'Passwords does not match',
 };
