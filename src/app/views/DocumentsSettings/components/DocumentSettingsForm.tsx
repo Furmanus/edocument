@@ -221,6 +221,13 @@ class DocumentSettingsFormClass extends React.PureComponent<
 
       if (preparedErrors && Object.keys(preparedErrors).length) {
         return preparedErrors;
+      } else if (!globalError) {
+        dispatch(
+          openSnackBarAction(
+            DocumentSettingsTexts.DocumentErrorUnknownError,
+            'error',
+          ),
+        );
       }
     }
   };
