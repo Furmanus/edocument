@@ -129,7 +129,7 @@ class LoginFormClass extends React.PureComponent<Props, IState> {
       } else {
         await loginUserApi(userInputValue, passwordInputValue);
 
-        window.location.pathname = '/settings';
+        window.location.pathname = '/manage';
       }
     } catch (e) {
       const errorData = e.response?.data?.message;
